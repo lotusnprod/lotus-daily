@@ -1,0 +1,52 @@
+site_name: daily-lotus
+repo_url: https://github.com/oolonek/daily-lotus
+site_url: https://oolonek.github.io/daily-lotus
+site_description: This is a Python bot for daily_lotus account on Mastodon
+site_author: Pierre-Marie Allard
+edit_uri: edit/main/docs/
+repo_name: oolonek/daily-lotus
+copyright: Maintained by <a href="https://oolonek.com">oolonek</a>.
+
+nav:
+  - Home: index.md
+  - Modules: modules.md
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["daily_lotus"]
+theme:
+  name: material
+  feature:
+    tabs: true
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: deep orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/oolonek/daily-lotus
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/daily-lotus
+
+markdown_extensions:
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
