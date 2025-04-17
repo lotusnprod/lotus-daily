@@ -9,7 +9,7 @@ from daily_lotus.wikidata_query import get_candidate_qids, get_molecule_details
 
 def run(dry_run: bool = False):
     print("📡 Fetching candidate compound QIDs...")
-    qids = get_candidate_qids(limit=1000)
+    qids = get_candidate_qids()
     secrets.SystemRandom().shuffle(qids)
 
     for qid in qids:

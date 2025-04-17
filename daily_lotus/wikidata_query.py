@@ -7,14 +7,13 @@ from SPARQLWrapper import JSON, SPARQLWrapper
 WD_ENDPOINT = "https://query.wikidata.org/sparql"
 
 
-def get_candidate_qids(limit: int = 1000) -> list[str]:
-    query = f"""
-    SELECT DISTINCT ?compound WHERE {{
+def get_candidate_qids() -> list[str]:
+    query = """
+    SELECT DISTINCT ?compound WHERE {
       ?compound wdt:P703 ?taxon ;
                 wdt:P233 ?smiles .
       ?taxon wdt:P18 ?image .
-    }}
-    LIMIT {limit}
+    }
     """
     sparql = SPARQLWrapper(WD_ENDPOINT)
     sparql.setQuery(query)
