@@ -11,63 +11,125 @@ This is a Python bot for daily_lotus account on Mastodon
 - **Github repository**: <https://github.com/oolonek/daily-lotus/>
 - **Documentation** <https://oolonek.github.io/daily-lotus/>
 
-## Getting started with your project
+# 🤖 daily_lotus bot
 
-### 1. Create a New Repository
+**daily_lotus** is a Python bot that toots daily natural products occurrences on Mastodon, via the account [@daily_lotus](https://mastodon.social/@daily_lotus).
+It highlights natural compounds found in plants, fungi, bacteria or animals — and includes Wikidata references and visual structure depictions.
 
-First, create a repository on GitHub with the same name as this project, and then run the following commands:
+The aim is to raise awareness on the hidden chemical diversity of life on Earth and the importance of open data in bio and chemodiversity research.
+
+We also expect that by putting side by side the structure of the molecule, a picture of the taxon and the references backing up the occurence this can serve as an entry point for researchers willing to contribute to the LOTUS Initiative and edit Wikidata.
+
+The bot is part of the [LOTUS Initiative](https://lotus.nprod.net/) and is powered by [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page) and the [Cheminformatics Microservice](https://docs.api.naturalproducts.net/).
+The bot is designed to be run daily, but you can also run it manually or in a dry-run mode to preview the output without posting.
+
+
+
+## 🛠️ What does it do?
+
+Every day at 8:00 AM, the bot:
+
+1. Selects a random molecule from [Wikidata](https://www.wikidata.org/wiki/) that:
+   - Has a known SMILES structure (so we can draw it)
+   - Is associated with a specific taxon trhough the find in taxon property ([P703](https://www.wikidata.org/wiki/Property:P703))
+   - Has a valid reference documenting this occurrence
+
+2. Fetches:
+   - The molecule’s name and it's SMILES structure. The structure is depicted via the [Cheminformatics Microservice](https://docs.api.naturalproducts.net/)
+   - The taxon name (e.g., _Curcuma longa_) and its associated image are retrieved via the taxonLabel and the [P18](https://www.wikidata.org/wiki/Property:P18) property.
+   - The scientific publication that supports the occurrence is retrieved via the P248 property.
+   - The taxon kingdom is retrieved traversing the taxon tree via the [P171](https://www.wikidata.org/wiki/Property:P171) property and searching for Plantae ([Q756](https://www.wikidata.org/wiki/Q756)), Fungi ([Q764](https://www.wikidata.org/wiki/Q754)), Animalia ([Q729](https://www.wikidata.org/wiki/Q729)) or Bacteria ([Q10876](https://www.wikidata.org/wiki/Q10876)).
+    - The taxon kingdom is used to select the emoji to be used in the post.
+
+
+3. Posts a formatted message to Mastodon with:
+   - 🧪 Molecule
+   - 🌿 or 🍄 or 🐛 or 🦠 depending on the organism's kingdom
+   - 📚 Reference
+   - ✏️ A note that readers can help improve the data via Wikidata
+
+
+
+## 🗒️ Example Post
 
 ```bash
-git init -b main
-git add .
-git commit -m "init commit"
-git remote add origin git@github.com:oolonek/daily-lotus.git
-git push -u origin main
-```
+📣 Natural Product Occurrence of the Day
 
-### 2. Set Up Your Development Environment
+🧪 (-)-verbenone [https://www.wikidata.org/wiki/Q6535827] is a molecule
+found in a 🌿 plant, Thymus camphoratus [https://www.wikidata.org/wiki/Q145377]
+📚 according to: Composition and infraspecific variability of essential oil from Thymus camphoratus [https://www.wikidata.org/wiki/Q58423750]
 
-Then, install the environment and the pre-commit hooks with
+✏️ This occurrence is curated in the frame of the LOTUS Initiative and is available on Wikidata [https://www.wikidata.org/wiki/]. If you spot an error, feel free to improve it!
+````
 
-```bash
-make install
-```
 
-This will also generate your `uv.lock` file
+## 🚀 How to run it
 
-### 3. Run the pre-commit hooks
+### One-time setup
 
-Initially, the CI/CD pipeline might be failing due to formatting issues. To resolve those run:
+Install dependencies using [uv](https://github.com/astral-sh/uv):
 
 ```bash
-uv run pre-commit run -a
+uv pip install -r requirements.txt
 ```
 
-### 4. Commit the changes
 
-Lastly, commit the changes made by the two steps above to your repository.
+Then copy .env.example to .env and fill in your Mastodon API credentials:
 
 ```bash
-git add .
-git commit -m 'Fix formatting issues'
-git push origin main
+MASTODON_API_BASE_URL=https://mastodon.social
+MASTODON_ACCESS_TOKEN=...
 ```
 
-You are now ready to start development on your project!
-The CI/CD pipeline will be triggered when you open a pull request, merge to main, or when you create a new release.
+Run the bot manually
 
-To finalize the set-up for publishing to PyPI, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/publishing/#set-up-for-pypi).
-For activating the automatic documentation with MkDocs, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/mkdocs/#enabling-the-documentation-on-github).
-To enable the code coverage reports, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/codecov/).
 
-## Releasing a new version
+```bash
+uv run run_bot.py
+```
 
-- Create an API Token on [PyPI](https://pypi.org/).
-- Add the API Token to your projects secrets with the name `PYPI_TOKEN` by visiting [this page](https://github.com/oolonek/daily-lotus/settings/secrets/actions/new).
-- Create a [new release](https://github.com/oolonek/daily-lotus/releases/new) on Github.
-- Create a new tag in the form `*.*.*`.
+To preview the output without posting:
 
-For more details, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/cicd/#how-to-trigger-a-release).
+```bash
+uv run run_bot.py --dry-run
+```
+
+Automate daily posting
+
+To schedule daily runs at 8:00 AM:
+
+```bash
+crontab -e
+```
+Add this line:
+
+```bash
+0 8 * * * cd /full/path/to/daily-lotus && uv run run_bot.py
+```
+
+## Roadmap
+
+- [ ] Add a command line interface (CLI) to to run the bot with different parameters (e.g., focussed taxonomic groups, etc.)
+- [ ] Prepare a Streamlit app to display the same information (structures, taxon image and references) but without waiting for the daily run. This could be a first iteration for a curation interface for LOTUS data
+
+
+## 🧬 Credits & contribution
+
+This bot is powered by:
+
+- [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page) - the free knowledge base that anyone can edit
+
+- [The LOTUS Initiative](https://lotus.nprod.net/) see also [LOTUS on Wikidata](https://lotus.nprod.net/) - a collaborative effort to curate natural product occurrences. Overview available in the [LOTUS paper](https://doi.org/10.7554%2FELIFE.70780)
+
+- [Cheminformatics Microservice](https://docs.api.naturalproducts.net/)
+
+- [Mastodon.py](https://mastodonpy.readthedocs.io/en/stable/) - a Python wrapper for the Mastodon API
+
+
+Made with ❤️ by researchers committed to open data, chemistry, and biodiversity.
+If you want to contribute, please fork the repository and create a pull request with your changes.
+If you want to add a new feature, please open an issue first to discuss it.
+If you have any questions, please open an issue.
 
 ---
 
