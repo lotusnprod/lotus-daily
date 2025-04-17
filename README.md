@@ -70,7 +70,7 @@ found in a 🌿 plant, Thymus camphoratus [https://www.wikidata.org/wiki/Q145377
 Install dependencies using [uv](https://github.com/astral-sh/uv):
 
 ```bash
-uv pip install -r requirements.txt
+uv pip install -e .
 ```
 
 
@@ -104,7 +104,7 @@ crontab -e
 Add this line:
 
 ```bash
-0 8 * * * cd /full/path/to/daily-lotus && uv run run_bot.py
+0 8 * * * cd /full/path/to/daily-lotus && uv run run_bot.py >> cron.log 2>&1
 ```
 
 ## Roadmap
