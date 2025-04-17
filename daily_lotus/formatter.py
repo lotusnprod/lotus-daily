@@ -23,4 +23,6 @@ def compose_message(
         "\n\n"
         f"✏️ This occurrence is curated in the frame of the LOTUS Initiative and is available on Wikidata [{wikidata_edit_link}]. "
         f"If you spot an error, feel free to improve it!"
+        "\n\n"
+        "#DailyNP #NaturalProducts #LOTUS #Wikidata #OpenScience #LinkedOpenData\n"
     )
