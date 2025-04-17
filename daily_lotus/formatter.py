@@ -12,6 +12,7 @@ def compose_message(
         return "an" if word[0] in "aeiou" else "a"
 
     article = choose_article(kingdom_label)
+    wikidata_edit_link = f"https://www.wikidata.org/wiki/{compound_qid}#P703"
 
     return (
         "📣 Natural Product Occurrence of the Day\n\n"
@@ -20,6 +21,6 @@ def compose_message(
         f"{taxon} [https://www.wikidata.org/wiki/{taxon_qid}]\n"
         f"📚 according to: {reference} [https://www.wikidata.org/wiki/{reference_qid}]"
         "\n\n"
-        f"✏️ This occurrence is curated in the frame of the LOTUS Initiative and is available on Wikidata [https://www.wikidata.org/wiki/]. "
+        f"✏️ This occurrence is curated in the frame of the LOTUS Initiative and is available on Wikidata [{wikidata_edit_link}]. "
         f"If you spot an error, feel free to improve it!"
     )
