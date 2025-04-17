@@ -1,4 +1,5 @@
-import random
+import argparse
+import secrets
 
 from daily_lotus.formatter import compose_message
 from daily_lotus.log import record_post, was_posted
@@ -6,10 +7,10 @@ from daily_lotus.mastodon_client import post_to_mastodon
 from daily_lotus.wikidata_query import get_candidate_qids, get_molecule_details
 
 
-def run():
+def run(dry_run: bool = False):
     print("📡 Fetching candidate compound QIDs...")
     qids = get_candidate_qids(limit=1000)
-    random.shuffle(qids)
+    secrets.SystemRandom().shuffle(qids)
 
     for qid in qids:
         print(f"🔍 Trying compound {qid}...")
@@ -34,18 +35,30 @@ def run():
             reference_qid=details["reference_qid"],
             taxon_emoji=details["taxon_emoji"],
             kingdom_label=details["kingdom_label"],
-            # query_url=details["query_url"]
         )
 
-        print("🟢 Posting:\n", message)
-        post_to_mastodon(message, image_url=details.get("image_url"), taxon_image_url=details.get("taxon_image_url"))
-
-        record_post(compound_qid, taxon_qid)
-        print("✅ Posted and logged.")
+        if dry_run:
+            print("🧪 Dry run mode — not posting to Mastodon.")
+            print("------ Message ------")
+            print(message)
+            print("🖼 Molecule image URL:", details.get("image_url"))
+            print("🖼 Taxon image URL:", details.get("taxon_image_url"))
+        else:
+            print("🟢 Posting:")
+            print(message)
+            post_to_mastodon(
+                message, image_url=details.get("image_url"), taxon_image_url=details.get("taxon_image_url")
+            )
+            record_post(compound_qid, taxon_qid)
+            print("✅ Posted and logged.")
         break
     else:
         print("❌ No new unique compound-taxon pair found.")
 
 
 if __name__ == "__main__":
-    run()
+    parser = argparse.ArgumentParser(description="Run the Daily LOTUS bot.")
+    parser.add_argument("--dry-run", action="store_true", help="Run the bot without posting to Mastodon.")
+    args = parser.parse_args()
+
+    run(dry_run=args.dry_run)
