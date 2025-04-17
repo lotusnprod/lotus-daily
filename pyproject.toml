@@ -17,6 +17,13 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+dependencies = [
+    "cairosvg>=2.7.1",
+    "mastodon-py>=2.0.1",
+    "python-dotenv>=1.1.0",
+    "requests>=2.32.3",
+    "sparqlwrapper>=2.0.0",
+]
 
 [project.urls]
 Homepage = "https://oolonek.github.io/daily-lotus/"
@@ -53,6 +60,7 @@ check_untyped_defs = true
 warn_return_any = true
 warn_unused_ignores = true
 show_error_codes = true
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
