@@ -1,7 +1,7 @@
 import argparse
 import secrets
 
-from daily_lotus.formatter import compose_message
+from daily_lotus.formatter import MessageTooLongError, compose_message
 from daily_lotus.log import record_post, was_posted
 from daily_lotus.mastodon_client import post_to_mastodon
 from daily_lotus.wikidata_query import get_candidate_qids, get_molecule_details
@@ -26,16 +26,21 @@ def run(dry_run: bool = False):
             print(f"⏩ Already posted {compound_qid} + {taxon_qid}, skipping.")
             continue
 
-        message = compose_message(
-            compound=details["compound"],
-            compound_qid=compound_qid,
-            taxon=details["taxon"],
-            taxon_qid=taxon_qid,
-            reference=details["reference"],
-            reference_qid=details["reference_qid"],
-            taxon_emoji=details["taxon_emoji"],
-            kingdom_label=details["kingdom_label"],
-        )
+        try:
+            message = compose_message(
+                compound=details["compound"],
+                compound_qid=compound_qid,
+                taxon=details["taxon"],
+                taxon_qid=taxon_qid,
+                reference=details["reference"],
+                reference_qid=details["reference_qid"],
+                taxon_emoji=details["taxon_emoji"],
+                kingdom_label=details["kingdom_label"],
+            )
+        except MessageTooLongError as e:
+            print(str(e))
+            print("⏭️ Skipping this compound-taxon pair due to length constraints.")
+            continue
 
         if dry_run:
             print("🧪 Dry run mode — not posting to Mastodon.")
