@@ -110,6 +110,9 @@ Add this line:
 ## Roadmap
 
 - [ ] Add a command line interface (CLI) to to run the bot with different parameters (e.g., focussed taxonomic groups, etc.)
+- [ ] Check randomization of the input molecule selection.
+- [ ] Add a direct link to the found in taxon property and ref of the molecule page on Wikidata (for curation purposes)
+- [ ] Add relevant #
 - [ ] Prepare a Streamlit app to display the same information (structures, taxon image and references) but without waiting for the daily run. This could be a first iteration for a curation interface for LOTUS data
 
 
