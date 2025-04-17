@@ -21,7 +21,7 @@ def compose_message(
         f"{taxon} [https://www.wikidata.org/wiki/{taxon_qid}]\n"
         f"📚 according to: {reference} [https://www.wikidata.org/wiki/{reference_qid}]"
         "\n\n"
-        f"✏️ This occurrence is curated in the frame of the LOTUS Initiative and is available on Wikidata [{wikidata_edit_link}]. "
+        f"✏️ This occurrence is shared in the frame of the LOTUS Initiative and is available for curation on Wikidata [{wikidata_edit_link}]. "
         f"If you spot an error, feel free to improve it!"
         "\n\n"
         "#DailyNP #NaturalProducts #LOTUS #Wikidata #OpenScience #LinkedOpenData\n"
