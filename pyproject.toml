@@ -5,7 +5,7 @@ description = "This is a Python bot for daily_lotus account on Mastodon"
 authors = [{ name = "Pierre-Marie Allard", email = "grndstt@protonmail.com" }]
 readme = "README.md"
 keywords = ['python']
-requires-python = ">=3.9,<4.0"
+requires-python = ">=3.10,<4.0"
 classifiers = [
     "Intended Audience :: Developers",
     "Programming Language :: Python",
