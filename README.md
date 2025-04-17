@@ -111,6 +111,8 @@ Add this line:
 
 - [ ] Add a command line interface (CLI) to to run the bot with different parameters (e.g., focussed taxonomic groups, etc.)
 
+- [ ] Display 3D structures 
+
 - [x] Check randomization of the input molecule selection.
 Simply dropped the initial LIMIT, the query is anyway runned once a day, we can wait for a pair of seconds and fetch the full LOTUS
 
