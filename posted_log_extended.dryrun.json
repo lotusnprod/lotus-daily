@@ -11,11 +11,14 @@
   },
   {
     "compound_label": "Zythiostromic acid C",
+    "compound_label_last_checked": "Zythiostromic acid C",
     "compound_qid": "Q104986113",
     "last_reply_timestamp": "2025-04-18T15:00:04.916186+00:00",
     "reference_label": "New isocoumarins, naphthoquinones, and a cleistanthane-type diterpene from Nectria pseudotrichia 120-1NP.",
+    "reference_label_last_checked": "New isocoumarins, naphthoquinones, and a cleistanthane-type diterpene from Nectria pseudotrichia 120-1NP.",
     "reference_qid": "Q52604398",
     "taxon_label": "Nectria pseudotrichia",
+    "taxon_label_last_checked": "Nectria pseudotrichia",
     "taxon_qid": "Q6985860",
     "timestamp": "2025-04-18T09:26:59.761392",
     "toot_id": "114358250353918052"

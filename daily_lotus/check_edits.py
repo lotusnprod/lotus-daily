@@ -15,6 +15,7 @@ from daily_lotus.wikidata_query import (
 )
 
 LOG_FILE = Path("posted_log_extended.json")
+DEBUG_LOG_FILE = Path("posted_log_extended.dryrun.json")
 
 
 def format_unified_summary(
@@ -45,6 +46,16 @@ def format_unified_summary(
     return "\n".join(lines)
 
 
+def initialize_last_checked_labels(entry: ExtendedPostRecord) -> None:
+    """Ensure the entry has the *_label_last_checked fields initialized."""
+    if "compound_label_last_checked" not in entry:
+        entry["compound_label_last_checked"] = entry.get("compound_label", "")
+    if "taxon_label_last_checked" not in entry:
+        entry["taxon_label_last_checked"] = entry.get("taxon_label", "")
+    if "reference_label_last_checked" not in entry:
+        entry["reference_label_last_checked"] = entry.get("reference_label", "")
+
+
 def was_occurrence_deleted(entry: ExtendedPostRecord, since: datetime) -> Optional[str]:
     if not occurrence_still_exists(entry["compound_qid"], entry["taxon_qid"]):
         print("❌ Occurrence was deleted from Wikidata!")
@@ -60,29 +71,53 @@ def get_label_changes(entry: ExtendedPostRecord, since: datetime) -> tuple[list[
     editors = []
     result = fetch_current_labels(entry["compound_qid"], entry["taxon_qid"], entry["reference_qid"])
 
-    for field, qid, old_label, new_label_fn, editor_fn in [
+    # Compare live labels with stored last checked labels
+    for field, qid, last_checked_label, new_label_fn, editor_fn in [
         (
             "compound",
             entry["compound_qid"],
-            entry["compound_label"],
+            entry["compound_label_last_checked"],
             lambda r: r["compound_label"],
             get_label_change_editor,
         ),
-        ("taxon", entry["taxon_qid"], entry["taxon_label"], lambda r: r["taxon_label"], get_label_change_editor),
+        (
+            "taxon",
+            entry["taxon_qid"],
+            entry["taxon_label_last_checked"],
+            lambda r: r["taxon_label"],
+            get_label_change_editor,
+        ),
         (
             "reference",
             entry["reference_qid"],
-            entry["reference_label"],
+            entry["reference_label_last_checked"],
             lambda r: r["reference_label"],
             get_reference_label_change_editor,
         ),
     ]:
+        # Handle None for last_checked_label
+        if last_checked_label is None:
+            last_checked_label = ""
+
         new_label = new_label_fn(result)
-        if new_label != old_label:
-            changes.append((field, old_label, new_label))
-            editor = editor_fn(qid, old_label, since)
-            if editor:
-                editors.append(editor)
+
+        # Skip change if no actual change in label
+        if new_label == last_checked_label:
+            continue
+
+        # Otherwise, it's a detected change
+        changes.append((field, last_checked_label, new_label))
+        editor = editor_fn(qid, last_checked_label, since)
+        if editor:
+            editors.append(editor)
+
+        # Update the 'last_checked' label after detecting a change
+        if field == "compound":
+            entry["compound_label_last_checked"] = new_label
+        elif field == "taxon":
+            entry["taxon_label_last_checked"] = new_label
+        elif field == "reference":
+            entry["reference_label_last_checked"] = new_label
 
     return changes, editors
 
@@ -93,6 +128,9 @@ def process_entry(entry: ExtendedPostRecord, dry_run: bool) -> bool:
     if not entry.get("toot_id"):
         print("⚠️ No toot_id available, skipping.")
         return False
+
+    # Initialize missing fields for the first run
+    initialize_last_checked_labels(entry)
 
     since_str = cast(str, entry.get("last_reply_timestamp", entry["timestamp"]))
     since = datetime.fromisoformat(since_str).replace(tzinfo=timezone.utc)
@@ -151,6 +189,8 @@ def check_edits(dry_run: bool = False) -> None:
         if dry_run:
             print("📝 Dry run mode: would update log with:")
             print(json.dumps(log, indent=2))
+            DEBUG_LOG_FILE.write_text(json.dumps(log, indent=2))
+            print(f"🐛 Debug log written to: {DEBUG_LOG_FILE}")
         else:
             LOG_FILE.write_text(json.dumps(log, indent=2))
             print("📝 Updated log with new reply timestamps.")

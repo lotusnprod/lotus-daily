@@ -42,6 +42,9 @@ class PostRecord(TypedDict):
 
 class ExtendedPostRecord(PostRecord, total=False):  # optional keys go here
     last_reply_timestamp: Optional[str]
+    compound_label_last_checked: Optional[str]
+    taxon_label_last_checked: Optional[str]
+    reference_label_last_checked: Optional[str]
 
 
 def load_extended_log() -> list[PostRecord]:
