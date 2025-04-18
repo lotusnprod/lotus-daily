@@ -26,7 +26,7 @@ def compose_message(
         f"✏️ This occurrence is available for curation on Wikidata "
         f"[https://www.wikidata.org/wiki/{compound_qid}#P703]. If you spot an error, feel free to improve it!"
     )
-    hashtags = "#LOTUS #Wikidata #OpenScience #LinkedOpenData"
+    hashtags = "#LOTUS #Wikidata #LinkedOpenData"
 
     # Full message with everything
     message = (
@@ -35,7 +35,7 @@ def compose_message(
         f"found in {article} {taxon_emoji} {kingdom_label}, {taxon} [https://www.wikidata.org/wiki/{taxon_qid}]\n"
         f"📚 according to: {full_reference}\n\n"
         f"{footer}\n\n"
-        f"#DailyNP {hashtags}"
+        f"#DailyNP #OpenScience {hashtags}"
     )
 
     if len(message) <= 500:

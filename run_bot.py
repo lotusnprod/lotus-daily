@@ -69,7 +69,7 @@ def run(dry_run: bool = False, use_cache: bool = False):
                 image_url=details.get("image_url"),
                 taxon_image_url=details.get("taxon_image_url"),
                 image_alt_text=image_alt_text,  # Pass alt-text for the molecule image
-                taxon_image_alt_text=taxon_image_alt_text  # Pass alt-text for the taxon image
+                taxon_image_alt_text=taxon_image_alt_text,  # Pass alt-text for the taxon image
             )
             toot_id = str(status["id"]) if status else None
 
