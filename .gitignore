@@ -142,4 +142,4 @@ cython_debug/
 posted_log.json
 clientcred.secret
 register_app.py
-candidate.json
+candidates.json

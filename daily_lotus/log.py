@@ -40,6 +40,10 @@ class PostRecord(TypedDict):
     timestamp: str
 
 
+class ExtendedPostRecord(PostRecord, total=False):  # optional keys go here
+    last_reply_timestamp: Optional[str]
+
+
 def load_extended_log() -> list[PostRecord]:
     if not os.path.exists(EXTENDED_LOG_FILE):
         return []
