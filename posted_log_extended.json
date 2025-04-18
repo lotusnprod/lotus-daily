@@ -23,5 +23,15 @@
     "taxon_qid": "Q6985860",
     "timestamp": "2025-04-18T09:26:59.761392",
     "toot_id": "114358250353918052"
+  },
+  {
+    "compound_qid": "Q27098385",
+    "taxon_qid": "Q22286909",
+    "reference_qid": "Q36274112",
+    "compound_label": "3-hydroxy-4-methylanthranilic acid",
+    "taxon_label": "Streptomyces antibioticus",
+    "reference_label": "Actinomycin synthesis in Streptomyces antibioticus: enzymatic conversion of 3-hydroxyanthranilic acid to 4-methyl-3-hydroxyanthranilic acid",
+    "toot_id": "114360031943730427",
+    "timestamp": "2025-04-18T17:00:04.928267"
   }
 ]

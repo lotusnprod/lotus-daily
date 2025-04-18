@@ -49,17 +49,27 @@ def run(dry_run: bool = False, use_cache: bool = False):
             print("⏭️ Skipping this compound-taxon pair due to length constraints.")
             continue
 
+        # Set alt-text for both images
+        image_alt_text = f"2D structure of {details['compound']} displaying molecular bonds."
+        taxon_image_alt_text = f"Image of {details['taxon']}, the taxon in which the compound is found."
+
         if dry_run:
             print("🧪 Dry run mode — not posting to Mastodon.")
             print("------ Message ------")
             print(message)
             print("🖼 Molecule image URL:", details.get("image_url"))
             print("🖼 Taxon image URL:", details.get("taxon_image_url"))
+            print("🖼 Molecule Alt-Text:", image_alt_text)
+            print("🖼 Taxon Alt-Text:", taxon_image_alt_text)
         else:
             print("🟢 Posting:")
             print(message)
             status = post_to_mastodon(
-                message, image_url=details.get("image_url"), taxon_image_url=details.get("taxon_image_url")
+                message,
+                image_url=details.get("image_url"),
+                taxon_image_url=details.get("taxon_image_url"),
+                image_alt_text=image_alt_text,  # Pass alt-text for the molecule image
+                taxon_image_alt_text=taxon_image_alt_text  # Pass alt-text for the taxon image
             )
             toot_id = str(status["id"]) if status else None
 
