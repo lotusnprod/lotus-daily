@@ -1,0 +1,67 @@
+[
+  {
+    "compound": "ammonia",
+    "compound_qid": "Q4087",
+    "image_url": "https://dev.api.naturalproducts.net/latest/depict/2D?smiles=N&width=300&height=200&toolkit=rdkit&rotate=0&CIP=false&unicolor=false",
+    "kingdom_label": "plant",
+    "reference": "Constituents of Cannabis sativa L. XVII. A review of the natural constituents",
+    "reference_qid": "Q40284493",
+    "smiles": "N",
+    "taxon": "Cannabis sativa",
+    "taxon_emoji": "\ud83c\udf3f",
+    "taxon_image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Cannabis%20sativa%202.jpg",
+    "taxon_qid": "Q26726"
+  },
+  {
+    "compound": "methanol",
+    "compound_qid": "Q14982",
+    "image_url": "https://dev.api.naturalproducts.net/latest/depict/2D?smiles=CO&width=300&height=200&toolkit=rdkit&rotate=0&CIP=false&unicolor=false",
+    "kingdom_label": "plant",
+    "reference": "The chemistry of food flavour. I. Volatile constituents of passionfruit, Passiflora edulis",
+    "reference_qid": "Q125026772",
+    "smiles": "CO",
+    "taxon": "Passiflora edulis",
+    "taxon_emoji": "\ud83c\udf3f",
+    "taxon_image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Markisa%20madu%20manis%20seperti%20kamu.jpg",
+    "taxon_qid": "Q156790"
+  },
+  {
+    "compound": "methane",
+    "compound_qid": "Q37129",
+    "image_url": "https://dev.api.naturalproducts.net/latest/depict/2D?smiles=C&width=300&height=200&toolkit=rdkit&rotate=0&CIP=false&unicolor=false",
+    "kingdom_label": "plant",
+    "reference": "Simultaneous determination of azoxyglycosides by high performance liquid chromatography and their contents in growing leaves of Japanese cycad.",
+    "reference_qid": "Q104388249",
+    "smiles": "C",
+    "taxon": "Cycas revoluta",
+    "taxon_emoji": "\ud83c\udf3f",
+    "taxon_image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Cycas%20inflorescence.jpg",
+    "taxon_qid": "Q161517"
+  },
+  {
+    "compound": "cholesterol",
+    "compound_qid": "Q43656",
+    "image_url": "https://dev.api.naturalproducts.net/latest/depict/2D?smiles=CC%28C%29CCCC%28C%29C1CCC2C1%28CCC3C2CC%3DC4C3%28CCC%28C4%29O%29C%29C&width=300&height=200&toolkit=rdkit&rotate=0&CIP=false&unicolor=false",
+    "kingdom_label": "plant",
+    "reference": "Changes in Sterol Content during Leaf Aging and In Vitro Differentiation in Solanum nigrum",
+    "reference_qid": "Q104247238",
+    "smiles": "CC(C)CCCC(C)C1CCC2C1(CCC3C2CC=C4C3(CCC(C4)O)C)C",
+    "taxon": "Solanum nigrum",
+    "taxon_emoji": "\ud83c\udf3f",
+    "taxon_image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Solanum%20nigra%20bgiu.jpg",
+    "taxon_qid": "Q146400"
+  },
+  {
+    "compound": "butane-2,3-diol",
+    "compound_qid": "Q209157",
+    "image_url": "https://dev.api.naturalproducts.net/latest/depict/2D?smiles=CC%28C%28C%29O%29O&width=300&height=200&toolkit=rdkit&rotate=0&CIP=false&unicolor=false",
+    "kingdom_label": "plant",
+    "reference": "Free and Bound Volatiles of Garlic Mustard (Alliaria petiolata)",
+    "reference_qid": "Q106267249",
+    "smiles": "CC(C(C)O)O",
+    "taxon": "Alliaria petiolata",
+    "taxon_emoji": "\ud83c\udf3f",
+    "taxon_image_url": "http://commons.wikimedia.org/wiki/Special:FilePath/Alliaria%20petiolata2.jpg",
+    "taxon_qid": "Q160097"
+  }
+]

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>LOTUS Curator</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; background: #f4f4f4; }
+    .card { display: flex; gap: 2em; background: white; padding: 2em; border-radius: 8px; box-shadow: 0 0 10px #ccc; }
+    .block { flex: 1; text-align: center; }
+    img { max-width: 100%; max-height: 300px; border-radius: 8px; }
+    .buttons { margin-top: 1.5em; text-align: center; }
+    .btn { font-size: 1.1em; padding: 0.7em 1.4em; margin: 0 1em; border: none; border-radius: 8px; cursor: pointer; }
+    .btn-next { background: #4CAF50; color: white; }
+    .btn-edit { background: #f44336; color: white; }
+    #leaderboard { margin-top: 2em; background: #fff; padding: 1em; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>🌱 LOTUS Curator</h1>
+  <div id="gallery">Loading...</div>
+  <div class="buttons">
+    <button class="btn btn-edit" id="editBtn">🛠 Mark as dubious (edit)</button>
+    <button class="btn btn-next" id="nextBtn">✅ Looks good</button>
+  </div>
+  <div id="leaderboard"><strong>🏆 Leaderboard:</strong><ul id="leaders"></ul></div>
+
+  <script>
+    const BACKEND = "http://localhost:8000";
+    let cache = [];
+    let currentIndex = 0;
+    const user = "anonymous";
+
+    async function fetchDataOnce() {
+      const query = `
+        PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+        SELECT ?compound ?compoundLabel ?smiles ?taxon ?taxonLabel ?taxon_image WHERE {
+          ?compound wdt:P233 ?smiles .
+          ?compound rdfs:label ?compoundLabel .
+          ?compound wdt:P703 ?taxon .
+          ?taxon rdfs:label ?taxonLabel .
+          OPTIONAL { ?taxon wdt:P18 ?taxon_image . }
+          FILTER(LANG(?compoundLabel) = "en")
+          FILTER(LANG(?taxonLabel) = "en")
+        }
+        LIMIT 10
+      `;
+
+      const form = new URLSearchParams();
+      form.set("query", query);
+
+      const res = await fetch(`${BACKEND}/query`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: form
+      });
+
+      const text = await res.text();
+      console.log(">>> QLever response:\n", text);
+
+      const lines = text.trim().split("\n");
+      const headers = lines[0].split("\t").map(h => h.replace(/^\?/, ""));
+      const entries = lines.slice(1).map(line => {
+        const obj = {};
+        line.split("\t").forEach((val, i) => obj[headers[i]] = val);
+        return obj;
+      });
+
+      console.log(">>> Parsed entries:", entries);
+
+      if (entries.length === 0) {
+        document.getElementById("gallery").innerHTML = "<p>No entries found. 💤</p>";
+        return;
+      }
+
+      cache = entries;
+      renderEntry();
+    }
+
+    function renderEntry() {
+      if (currentIndex >= cache.length) {
+        document.getElementById("gallery").innerHTML = "<p>🎉 All done for now!</p>";
+        return;
+      }
+
+      const entry = cache[currentIndex];
+      const compoundLabel = entry.compoundLabel || entry.compound?.split("/").pop() || "Unknown compound";
+      const compoundUrl = entry.compound || "#";
+
+      const taxonLabel = entry.taxonLabel || entry.taxon?.split("/").pop() || "Unknown taxon";
+      const taxonUrl = entry.taxon || "#";
+      const imageTaxon = entry.taxon_image?.replace(/^<|>$/g, '') || "";
+
+      const html = `
+        <div class="card">
+          <div class="block">
+            <h2><a href="${compoundUrl}" target="_blank">${compoundLabel}</a></h2>
+            <p>💊 SMILES: ${entry.smiles}</p>
+          </div>
+          <div class="block">
+            <h2><a href="${taxonUrl}" target="_blank">${taxonLabel}</a></h2>
+            ${imageTaxon ? `<img src="${imageTaxon}" alt="Taxon image">` : "<p>No taxon image available</p>"}
+          </div>
+        </div>
+      `;
+
+      document.getElementById("gallery").innerHTML = html;
+
+      document.getElementById("editBtn").onclick = () => logAction("edit", entry);
+      document.getElementById("nextBtn").onclick = () => logAction("accepted", entry);
+    }
+
+    async function logAction(status, entry) {
+      await fetch(`${BACKEND}/log`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user,
+          status,
+          compound_qid: entry.compound?.split("/").pop(),
+          taxon_qid: entry.taxon?.split("/").pop()
+        })
+      });
+
+      currentIndex++;
+      renderEntry();
+      fetchLeaderboard();
+    }
+
+    async function fetchLeaderboard() {
+      const res = await fetch(`${BACKEND}/leaderboard`);
+      const data = await res.json();
+      const list = data.leaders.map(e => `<li>${e.user}: ${e.score}</li>`).join("");
+      document.getElementById("leaders").innerHTML = list;
+    }
+
+    fetchDataOnce();
+    fetchLeaderboard();
+  </script>
+</body>
+</html>

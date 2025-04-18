@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LOTUS Compound–Taxon Gallery</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+    .card {
+      border: 1px solid #ccc; padding: 1em; margin: 1em 0;
+      display: flex; gap: 2em; align-items: center;
+    }
+    .card img { max-height: 150px; }
+    .info { flex: 1; }
+  </style>
+</head>
+<body>
+  <h1>LOTUS Compound–Taxon Gallery</h1>
+  <div id="gallery">Loading...</div>
+
+  <script>
+    fetch("./gallery.json")
+      .then(response => response.json())
+      .then(data => {
+        const gallery = document.getElementById("gallery");
+        gallery.innerHTML = "";
+
+        data.forEach(entry => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          card.innerHTML = `
+            <div class="info">
+              <h2>${entry.compound}</h2>
+              <p>Found in: <strong>${entry.taxon}</strong></p>
+              <p>Kingdom: ${entry.kingdom_label} ${entry.taxon_emoji}</p>
+              <p>Reference: <a href="https://www.wikidata.org/wiki/${entry.reference_qid}" target="_blank">${entry.reference}</a></p>
+            </div>
+            <img src="${entry.image_url}" alt="Structure of ${entry.compound}">
+            <img src="${entry.taxon_image_url}" alt="Image of ${entry.taxon}">
+          `;
+
+          gallery.appendChild(card);
+        });
+      });
+  </script>
+</body>
+</html>

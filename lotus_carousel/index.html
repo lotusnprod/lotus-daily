@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>LOTUS Curator (QLever)</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            margin: 0;
+            padding: 2em;
+            background-color: #f9f9f9;
+        }
+
+        .card {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2em;
+            background-color: white;
+            padding: 2em;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .block {
+            flex: 1;
+            text-align: center;
+        }
+
+        .block img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 8px;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            margin: 0.5em 0;
+        }
+
+        p {
+            font-size: 1em;
+            color: #444;
+        }
+
+        .buttons {
+            margin-top: 2em;
+            display: flex;
+            justify-content: center;
+            gap: 2em;
+        }
+
+        .btn {
+            font-size: 1.2em;
+            padding: 0.8em 1.5em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-edit {
+            background-color: #ff4c4c;
+            color: white;
+        }
+
+        .btn-next {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffffee;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            font-size: 1.5em;
+            color: #444;
+            text-align: center;
+        }
+
+        .spinner {
+            margin-top: 1em;
+            font-size: 2em;
+            animation: spin 1.5s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        #errorMessage {
+            margin-top: 1em;
+            font-size: 1em;
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loadingOverlay">
+        <div>🌱 Hold on — we’re fetching some fresh LOTUS data for you to check...</div>
+        <div class="spinner">🌸</div>
+    </div>
+
+    <h1 style="text-align:center;">🌱 LOTUS Curation Interface (QLever)</h1>
+    <div id="gallery"></div>
+    <div class="buttons" id="buttons" style="display: none;">
+        <button class="btn btn-edit" id="editBtn">🛠 This looks wrong — edit it</button>
+        <button class="btn btn-next" id="nextBtn">✅ This looks good — next!</button>
+    </div>
+
+    <div id="errorMessage"></div>
+
+    <script>
+        const endpoint = "https://qlever.cs.uni-freiburg.de/wikidata/";
+        const batchSize = 20;
+        let offset = 0;
+        let cache = [];
+        let currentIndex = 0;
+        let isLoading = false;
+
+        const loadingOverlay = document.getElementById("loadingOverlay");
+        const errorMessage = document.getElementById("errorMessage");
+
+        async function fetchAndCacheMore() {
+            if (isLoading) return;
+            isLoading = true;
+            showLoading(true);
+            errorMessage.textContent = "";
+
+            const query = `
+SELECT ?compound ?compoundLabel ?taxon ?taxonLabel ?smiles ?taxon_image ?reference ?referenceLabel WHERE {
+  ?compound wdt:P233 ?smiles .
+  ?compound p:P703 ?statement .
+  ?statement ps:P703 ?taxon .
+  ?statement prov:wasDerivedFrom ?refnode .
+  ?refnode pr:P248 ?reference .
+
+  ?taxon wdt:P18 ?taxon_image .
+
+  ?compound rdfs:label ?compoundLabel .
+  ?taxon rdfs:label ?taxonLabel .
+  ?reference rdfs:label ?referenceLabel .
+
+  FILTER(LANG(?compoundLabel) = "en")
+  FILTER(LANG(?taxonLabel) = "en")
+  FILTER(LANG(?referenceLabel) = "en")
+}
+        LIMIT ${batchSize}
+        OFFSET ${offset}
+      `;
+
+            const formData = new URLSearchParams();
+            formData.set("query", query);
+            formData.set("send", "Send");
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("QLever query failed");
+
+                const text = await response.text();
+
+                const rows = text.trim().split("\n");
+                const headers = rows[0].split("\t");
+                const entries = rows.slice(1).map(line => {
+                    const cols = line.split("\t");
+                    const row = {};
+                    headers.forEach((h, i) => {
+                        row[h] = cols[i];
+                    });
+                    return row;
+                });
+
+                if (entries.length > 0) {
+                    cache = cache.concat(entries);
+                    offset += batchSize;
+                    if (currentIndex === 0) {
+                        showLoading(false);
+                        loadPage();
+                    }
+                } else if (cache.length === 0) {
+                    showLoading(false);
+                    errorMessage.innerHTML = `😢 No more data.<br><button onclick="retryFetch()">🔄 Try Again</button>`;
+                }
+
+            } catch (err) {
+                showLoading(false);
+                errorMessage.innerHTML = `❌ Error fetching data.<br><button onclick="retryFetch()">🔄 Retry</button>`;
+            }
+
+            isLoading = false;
+        }
+
+        function retryFetch() {
+            errorMessage.textContent = "";
+            fetchAndCacheMore();
+        }
+
+        function showLoading(state) {
+            loadingOverlay.style.display = state ? "flex" : "none";
+        }
+
+        function renderCard(entry) {
+            const smiles = entry.smiles;
+            const structureUrl = `https://dev.api.naturalproducts.net/latest/depict/2D?smiles=${encodeURIComponent(smiles)}&width=300&height=300`;
+
+            const compoundLabel = entry.compoundLabel;
+            const taxonLabel = entry.taxonLabel;
+            const referenceLabel = entry.referenceLabel;
+
+            const compoundUrl = entry.compound;
+            const taxonUrl = entry.taxon;
+            const referenceUrl = entry.reference;
+            const editLink = `${compoundUrl}#P703`;
+
+            const imageTaxon = entry.taxon_image;
+
+            const gallery = document.getElementById("gallery");
+            gallery.innerHTML = `
+        <div class="card">
+          <div class="block">
+            <img src="${structureUrl}" alt="Structure of ${compoundLabel}">
+            <h2><a href="${compoundUrl}" target="_blank">${compoundLabel}</a></h2>
+            <p>💊 Structure from SMILES</p>
+          </div>
+          <div class="block">
+            <img src="${imageTaxon}" alt="Image of ${taxonLabel}">
+            <h2><a href="${taxonUrl}" target="_blank">${taxonLabel}</a></h2>
+            <p>📖 Ref: <a href="${referenceUrl}" target="_blank">${referenceLabel}</a></p>
+          </div>
+        </div>
+      `;
+
+            document.getElementById("editBtn").onclick = () => window.open(editLink, "_blank");
+            document.getElementById("buttons").style.display = "flex";
+        }
+
+        function loadPage() {
+            const entry = cache[currentIndex];
+            if (!entry) {
+                fetchAndCacheMore();
+                return;
+            }
+
+            renderCard(entry);
+
+            if (cache.length - currentIndex < 5) {
+                fetchAndCacheMore();
+            }
+        }
+
+        document.getElementById("nextBtn").addEventListener("click", () => {
+            currentIndex++;
+            loadPage();
+        });
+
+        // Start initial fetch
+        fetchAndCacheMore();
+    </script>
+</body>
+
+</html>
