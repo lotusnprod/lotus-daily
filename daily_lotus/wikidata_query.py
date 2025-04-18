@@ -14,6 +14,7 @@ def get_candidate_qids() -> list[str]:
                 wdt:P233 ?smiles .
       ?taxon wdt:P18 ?image .
     }
+    LIMIT 500000
     """
     sparql = SPARQLWrapper(WD_ENDPOINT)
     sparql.setQuery(query)
