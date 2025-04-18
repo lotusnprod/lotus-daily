@@ -45,6 +45,7 @@ class ExtendedPostRecord(PostRecord, total=False):  # optional keys go here
     compound_label_last_checked: Optional[str]
     taxon_label_last_checked: Optional[str]
     reference_label_last_checked: Optional[str]
+    p703_exists_last_checked: Optional[bool]
 
 
 def load_extended_log() -> list[PostRecord]:
