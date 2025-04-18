@@ -1,7 +1,10 @@
 import secrets
 import urllib.parse
-from typing import Optional, cast
+from collections.abc import Callable
+from datetime import datetime
+from typing import Any, Optional, cast
 
+import requests
 from SPARQLWrapper import JSON, SPARQLWrapper
 
 WD_ENDPOINT = "https://query.wikidata.org/sparql"
@@ -14,82 +17,43 @@ def get_candidate_qids() -> list[str]:
                 wdt:P233 ?smiles .
       ?taxon wdt:P18 ?image .
     }
+    LIMIT 500000
     """
     sparql = SPARQLWrapper(WD_ENDPOINT)
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
-
-    raw = sparql.query().convert()
-    data = cast(dict, raw)
-    results = data["results"]["bindings"]
+    raw = cast(dict[str, Any], sparql.query().convert())
+    results = raw["results"]["bindings"]
     return [row["compound"]["value"].split("/")[-1] for row in results]
 
 
-def get_molecule_details(qid: str) -> Optional[dict]:
+def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
     query = f"""
     SELECT ?compoundLabel ?compound ?taxon ?taxonLabel ?reference ?referenceLabel ?smiles ?taxon_image ?kingdom ?kingdomLabel WHERE {{
-    BIND(wd:{qid} AS ?compound)
-
-    ?compound wdt:P233 ?smiles .
-
-    ?compound p:P703 ?statement .
-    ?statement ps:P703 ?taxon ;
-                prov:wasDerivedFrom ?refnode .
-    ?refnode pr:P248 ?reference .
-
-    ?taxon wdt:P18 ?taxon_image .
-
-    ?taxon wdt:P171* ?kingdom .
-    FILTER(?kingdom IN (
-        wd:Q756,         # Plantae
-        wd:Q764,    # Fungi
-        wd:Q729,          # Animalia
-        wd:Q10876      # Bacteria
-    ))
-
-    SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+      BIND(wd:{qid} AS ?compound)
+      ?compound wdt:P233 ?smiles .
+      ?compound p:P703 ?statement .
+      ?statement ps:P703 ?taxon ;
+                 prov:wasDerivedFrom ?refnode .
+      ?refnode pr:P248 ?reference .
+      ?taxon wdt:P18 ?taxon_image .
+      ?taxon wdt:P171* ?kingdom .
+      FILTER(?kingdom IN (wd:Q756, wd:Q764, wd:Q729, wd:Q10876))
+      SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
     }}
     LIMIT 10
     """
-
     sparql = SPARQLWrapper(WD_ENDPOINT)
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
-
-    raw = sparql.query().convert()
-    data = cast(dict, raw)
-    results = data["results"]["bindings"]
+    raw = cast(dict[str, Any], sparql.query().convert())
+    results = raw["results"]["bindings"]
     if not results:
         return None
 
-    row = secrets.choice(results)  # support multiple taxon hits
-
-    kingdom_label = row.get("kingdomLabel", {}).get("value", "")
-    kingdom_qid = row.get("kingdom", {}).get("value", "").split("/")[-1]
-    print(f"🔎 Found kingdom: {kingdom_label}")
-    print(f"🔎 Found kingdom QID: {kingdom_qid}")
-
-    taxon_emoji = {
-        "Q756": "🌿",
-        "Q764": "🍄",
-        "Q729": "🐛",
-        "Q10876": "🦠",
-    }.get(kingdom_qid, "🧬")  # default emoji
-
-    def extract_val(field: str) -> str:
-        val = row.get(field, {})
-        if isinstance(val, dict):
-            value = val.get("value")
-            return str(value) if value is not None else ""
-        return ""
-
-    def extract_qid(field: str) -> str:
-        val = row.get(field, {})
-        if isinstance(val, dict):
-            uri = val.get("value")
-            if isinstance(uri, str):
-                return uri.split("/")[-1]
-        return "unknown"
+    row = secrets.choice(results)
+    extract_val = lambda f: str(row.get(f, {}).get("value", ""))
+    extract_qid = lambda f: row.get(f, {}).get("value", "").split("/")[-1] if "value" in row.get(f, {}) else "unknown"
 
     smiles = extract_val("smiles")
     image_url = (
@@ -108,7 +72,139 @@ def get_molecule_details(qid: str) -> Optional[dict]:
         "smiles": smiles,
         "image_url": image_url,
         "taxon_image_url": extract_val("taxon_image"),
-        "taxon_emoji": taxon_emoji,
-        "kingdom_label": kingdom_label,
-        # "query_url": f"https://www.wikidata.org/wiki/{qid}"
+        "taxon_emoji": {"Q756": "🌿", "Q764": "🍄", "Q729": "🐛", "Q10876": "🦠"}.get(extract_qid("kingdom"), "🧬"),
+        "kingdom_label": extract_val("kingdomLabel"),
+    }
+
+
+def get_revisions(qid: str, since: datetime) -> list[dict[str, Any]]:
+    url = "https://www.wikidata.org/w/api.php"
+    params = {
+        "action": "query",
+        "prop": "revisions",
+        "titles": qid,
+        "rvprop": "ids|timestamp|user",
+        "rvlimit": "50",
+        "rvdir": "newer",
+        "formatversion": "2",
+        "format": "json",
+    }
+    headers = {"User-Agent": "DailyLotusBot/0.1 (https://earthmetabolome.org/; contact@earthmetabolome.org)"}
+    response = requests.get(url, params=params, headers=headers, timeout=10)
+    response.raise_for_status()
+    data = response.json()
+    pages = data.get("query", {}).get("pages", [])
+    return cast(list[dict[str, Any]], pages[0]["revisions"]) if pages and "revisions" in pages[0] else []
+
+
+def get_entity_data(qid: str, revid: int) -> dict[str, Any]:
+    url = f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json?revision={revid}"
+    headers = {"User-Agent": "DailyLotusBot/0.1 (https://earthmetabolome.org/; contact@earthmetabolome.org)"}
+    r = requests.get(url, headers=headers, timeout=10)
+    r.raise_for_status()
+    return cast(dict[str, Any], r.json()["entities"][qid])
+
+
+def get_label_from_revision(qid: str, revid: int) -> Optional[str]:
+    entity = get_entity_data(qid, revid)
+    val = entity.get("labels", {}).get("en", {}).get("value")
+    return val if isinstance(val, str) else None
+
+
+def get_claim_ids_from_revision(qid: str, revid: int, prop: str) -> set[str]:
+    claims = get_entity_data(qid, revid).get("claims", {}).get(prop, [])
+    ids: set[str] = set()
+    for claim in claims:
+        val = claim.get("mainsnak", {}).get("datavalue", {}).get("value", {})
+        if isinstance(val, dict) and "id" in val:
+            ids.add(val["id"])
+    return ids
+
+
+def get_revision_pairs(qid: str, since: datetime) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+    revs = get_revisions(qid, since)
+    return list(zip(revs[:-1], revs[1:]))
+
+
+def compare_revisions_for_change(
+    qid: str, revisions: list[dict[str, Any]], extractor: Callable[[dict[str, Any]], Optional[str]], old_val: str
+) -> Optional[str]:
+    for i in range(1, len(revisions)):
+        old_data: dict[str, Any] = get_entity_data(qid, revisions[i - 1]["revid"])
+        new_data: dict[str, Any] = get_entity_data(qid, revisions[i]["revid"])
+        old = extractor(old_data)
+        new = extractor(new_data)
+        if old == old_val and new and new != old:
+            user = revisions[i].get("user")
+            return str(user) if isinstance(user, str) else None
+    return None
+
+
+def find_p703_removal_editor(qid: str, taxon_qid: str, since: datetime) -> Optional[str]:
+    for old_rev, new_rev in get_revision_pairs(qid, since):
+        if taxon_qid in get_claim_ids_from_revision(
+            qid, old_rev["revid"], "P703"
+        ) and taxon_qid not in get_claim_ids_from_revision(qid, new_rev["revid"], "P703"):
+            return str(new_rev["user"])
+    return None
+
+
+def extract_label(data: dict[str, Any]) -> Optional[str]:
+    val = data.get("labels", {}).get("en", {}).get("value")
+    return val if isinstance(val, str) else None
+
+
+def get_label_change_editor(qid: str, old_label: str, since: datetime) -> Optional[str]:
+    return compare_revisions_for_change(qid, get_revisions(qid, since), extract_label, old_label)
+
+
+def get_smiles_change_editor(qid: str, old_smiles: str, since: datetime) -> Optional[str]:
+    def extractor(data: dict[str, Any]) -> Optional[str]:
+        for claim in data.get("claims", {}).get("P233", []):
+            val = claim.get("mainsnak", {}).get("datavalue", {}).get("value")
+            if isinstance(val, str):
+                return val
+        return None
+
+    return compare_revisions_for_change(qid, get_revisions(qid, since), extractor, old_smiles)
+
+
+def get_reference_label_change_editor(qid: str, old_label: str, since: datetime) -> Optional[str]:
+    for old_rev, new_rev in get_revision_pairs(qid, since):
+        if (
+            (old_val := get_label_from_revision(qid, old_rev["revid"])) == old_label
+            and (new_val := get_label_from_revision(qid, new_rev["revid"]))
+            and new_val != old_val
+        ):
+            return str(new_rev["user"])
+    return None
+
+
+def occurrence_still_exists(compound_qid: str, taxon_qid: str) -> bool:
+    sparql = SPARQLWrapper(WD_ENDPOINT)
+    sparql.setQuery(f"ASK {{ wd:{compound_qid} wdt:P703 wd:{taxon_qid} . }}")
+    sparql.setReturnFormat(JSON)
+    result = cast(dict[str, Any], sparql.query().convert())
+    return cast(bool, result.get("boolean", False))
+
+
+def fetch_current_labels(compound_qid: str, taxon_qid: str, reference_qid: str) -> dict[str, str]:
+    sparql = SPARQLWrapper(WD_ENDPOINT)
+    sparql.setQuery(f"""
+    SELECT ?compoundLabel ?taxonLabel ?referenceLabel WHERE {{
+      OPTIONAL {{ wd:{compound_qid} rdfs:label ?compoundLabel . FILTER(LANG(?compoundLabel) = "en") }}
+      OPTIONAL {{ wd:{taxon_qid} rdfs:label ?taxonLabel . FILTER(LANG(?taxonLabel) = "en") }}
+      OPTIONAL {{ wd:{reference_qid} rdfs:label ?referenceLabel . FILTER(LANG(?referenceLabel) = "en") }}
+    }}
+    """)
+    sparql.setReturnFormat(JSON)
+    raw = cast(dict[str, Any], sparql.query().convert())
+    bindings = raw.get("results", {}).get("bindings", [])
+    if not bindings:
+        return {"compound_label": "", "taxon_label": "", "reference_label": ""}
+    row = bindings[0]
+    return {
+        "compound_label": str(row.get("compoundLabel", {}).get("value", "")),
+        "taxon_label": str(row.get("taxonLabel", {}).get("value", "")),
+        "reference_label": str(row.get("referenceLabel", {}).get("value", "")),
     }

@@ -10,10 +10,18 @@ load_dotenv()
 
 
 def get_client() -> Mastodon:
-    return Mastodon(access_token=os.getenv("MASTODON_ACCESS_TOKEN"), api_base_url=os.getenv("MASTODON_API_BASE_URL"))
+    return Mastodon(
+        access_token=os.getenv("MASTODON_ACCESS_TOKEN"),
+        api_base_url=os.getenv("MASTODON_API_BASE_URL"),
+    )
 
 
-def post_to_mastodon(message: str, image_url: str | None = None, taxon_image_url: str | None = None) -> None:
+def post_to_mastodon(
+    message: str,
+    image_url: str | None = None,
+    taxon_image_url: str | None = None,
+    in_reply_to_id: str | None = None,
+) -> Any:
     client = get_client()
     media_ids = []
 
@@ -41,4 +49,8 @@ def post_to_mastodon(message: str, image_url: str | None = None, taxon_image_url
     if taxon_image_url:
         media_ids.append(upload_image_from_url(taxon_image_url))
 
-    client.status_post(message, media_ids=media_ids if media_ids else None)
+    return client.status_post(
+        message,
+        media_ids=media_ids if media_ids else None,
+        in_reply_to_id=in_reply_to_id,
+    )

@@ -104,14 +104,21 @@ crontab -e
 Add this line:
 
 ```bash
-0 8 * * * cd /full/path/to/daily-lotus && uv run run_bot.py >> cron.log 2>&1
+0 8 * * * cd /full/path/to/daily-lotus && uv run run_bot.py >> logs/daily_lotus.log 2>&1
 ```
+
+For the check_edits.py script, you can run it manually or schedule it with cron as well.
+
+```bash
+*/5 * * * * cd /path/to/daily-lotus && uv run daily_lotus/check_edits.py >> logs/check_edits.log 2>&1
+```
+
 
 ## Roadmap
 
 - [ ] Add a command line interface (CLI) to to run the bot with different parameters (e.g., focussed taxonomic groups, etc.)
 
-- [ ] Display 3D structures 
+- [ ] Display 3D structures
 
 - [x] Check randomization of the input molecule selection.
 Simply dropped the initial LIMIT, the query is anyway runned once a day, we can wait for a pair of seconds and fetch the full LOTUS
