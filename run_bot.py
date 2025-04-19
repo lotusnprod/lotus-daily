@@ -50,7 +50,7 @@ def run(dry_run: bool = False, use_cache: bool = False):
             continue
 
         # Set alt-text for both images
-        image_alt_text = f"2D structure of {details['compound']} displaying molecular bonds."
+        image_alt_text = f"Chemical structure of {details['compound']} displaying atoms and bonds."
         taxon_image_alt_text = f"Image of {details['taxon']}, the taxon in which the compound is found."
 
         if dry_run:

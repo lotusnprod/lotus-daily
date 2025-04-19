@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, cast
 
-from daily_lotus.log import ExtendedPostRecord, load_extended_log
+from daily_lotus.log import PostRecord, load_extended_log
 from daily_lotus.mastodon_client import post_to_mastodon
 from daily_lotus.wikidata_query import (
     fetch_current_labels,
@@ -46,7 +46,7 @@ def format_unified_summary(
     return "\n".join(lines)
 
 
-def initialize_last_checked_labels(entry: ExtendedPostRecord) -> None:
+def initialize_last_checked_labels(entry: PostRecord) -> None:
     """Ensure the entry has the *_label_last_checked fields initialized."""
     if "compound_label_last_checked" not in entry:
         entry["compound_label_last_checked"] = entry.get("compound_label", "")
@@ -58,7 +58,7 @@ def initialize_last_checked_labels(entry: ExtendedPostRecord) -> None:
         entry["p703_exists_last_checked"] = True
 
 
-def was_occurrence_deleted(entry: ExtendedPostRecord, since: datetime) -> Optional[str]:
+def was_occurrence_deleted(entry: PostRecord, since: datetime) -> Optional[str]:
     """Check if the P703 (found in taxon) statement is still present."""
     occurrence_exists = occurrence_still_exists(entry["compound_qid"], entry["taxon_qid"])
 
@@ -79,7 +79,7 @@ def was_occurrence_deleted(entry: ExtendedPostRecord, since: datetime) -> Option
     return None
 
 
-def get_label_changes(entry: ExtendedPostRecord, since: datetime) -> tuple[list[tuple[str, str, str]], list[str]]:
+def get_label_changes(entry: PostRecord, since: datetime) -> tuple[list[tuple[str, str, str]], list[str]]:
     changes = []
     editors = []
     result = fetch_current_labels(entry["compound_qid"], entry["taxon_qid"], entry["reference_qid"])
@@ -134,7 +134,7 @@ def get_label_changes(entry: ExtendedPostRecord, since: datetime) -> tuple[list[
     return changes, editors
 
 
-def process_entry(entry: ExtendedPostRecord, dry_run: bool) -> bool:
+def process_entry(entry: PostRecord, dry_run: bool) -> bool:
     print(f"\n🔎 Checking {entry['compound_qid']} + {entry['taxon_qid']} + {entry['reference_qid']}")
 
     if not entry.get("toot_id"):
@@ -195,7 +195,7 @@ def check_edits(dry_run: bool = False) -> None:
     changed = False
 
     for raw_entry in log:
-        entry = cast(ExtendedPostRecord, raw_entry)
+        entry = cast(PostRecord, raw_entry)
         if process_entry(entry, dry_run=dry_run):
             changed = True
 
