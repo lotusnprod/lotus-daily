@@ -14,7 +14,7 @@ def get_candidate_qids() -> list[str]:
     query = """
     SELECT DISTINCT ?compound WHERE {
       ?compound wdt:P703 ?taxon ;
-                wdt:P233 ?smiles .
+                wdt:P2017 ?smiles .
       ?taxon wdt:P18 ?image .
     }
     LIMIT 500000
@@ -31,7 +31,7 @@ def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
     query = f"""
     SELECT ?compoundLabel ?compound ?taxon ?taxonLabel ?reference ?referenceLabel ?smiles ?taxon_image ?kingdom ?kingdomLabel WHERE {{
       BIND(wd:{qid} AS ?compound)
-      ?compound wdt:P233 ?smiles .
+      ?compound wdt:P2017 ?smiles .
       ?compound p:P703 ?statement .
       ?statement ps:P703 ?taxon ;
                  prov:wasDerivedFrom ?refnode .
@@ -160,7 +160,7 @@ def get_label_change_editor(qid: str, old_label: str, since: datetime) -> Option
 
 def get_smiles_change_editor(qid: str, old_smiles: str, since: datetime) -> Optional[str]:
     def extractor(data: dict[str, Any]) -> Optional[str]:
-        for claim in data.get("claims", {}).get("P233", []):
+        for claim in data.get("claims", {}).get("P2017", []):
             val = claim.get("mainsnak", {}).get("datavalue", {}).get("value")
             if isinstance(val, str):
                 return val

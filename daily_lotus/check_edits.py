@@ -188,6 +188,8 @@ def process_entry(entry: ExtendedPostRecord, dry_run: bool) -> bool:
 
 
 def check_edits(dry_run: bool = False) -> None:
+    # The time is also logged in the log file
+    print(f"🕒 It is: {datetime.now(tz=timezone.utc).isoformat()}")
     print("🔍 Checking for edits to previously posted occurrences...")
     log = load_extended_log()
     changed = False
