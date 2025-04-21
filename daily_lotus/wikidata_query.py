@@ -65,7 +65,7 @@ def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
     image_url = (
         f"https://dev.api.naturalproducts.net/latest/depict/2D?"
         f"smiles={urllib.parse.quote(smiles)}&width=300&height=200"
-        f"&toolkit=rdkit&rotate=0&CIP=false&unicolor=false"
+        f"&toolkit=cdk&rotate=0&CIP=false&unicolor=false"
     )
 
     return {
