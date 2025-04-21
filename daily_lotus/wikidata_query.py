@@ -20,6 +20,9 @@ def get_candidate_qids() -> list[str]:
     LIMIT 500000
     """
     sparql = SPARQLWrapper(WD_ENDPOINT)
+    sparql.addCustomHttpHeader(
+        "User-Agent", "DailyLotusBot/0.1 (https://www.earthmetabolome.org/; contact@earthmetabolome.org)"
+    )
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
     raw = cast(dict[str, Any], sparql.query().convert())
@@ -44,6 +47,9 @@ def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
     LIMIT 10
     """
     sparql = SPARQLWrapper(WD_ENDPOINT)
+    sparql.addCustomHttpHeader(
+        "User-Agent", "DailyLotusBot/0.1 (https://www.earthmetabolome.org/; contact@earthmetabolome.org)"
+    )
     sparql.setQuery(query)
     sparql.setReturnFormat(JSON)
     raw = cast(dict[str, Any], sparql.query().convert())
@@ -89,7 +95,7 @@ def get_revisions(qid: str, since: datetime) -> list[dict[str, Any]]:
         "formatversion": "2",
         "format": "json",
     }
-    headers = {"User-Agent": "DailyLotusBot/0.1 (https://earthmetabolome.org/; contact@earthmetabolome.org)"}
+    headers = {"User-Agent": "DailyLotusBot/0.1 (https://www.earthmetabolome.org/; contact@earthmetabolome.org)"}
     response = requests.get(url, params=params, headers=headers, timeout=10)
     response.raise_for_status()
     data = response.json()
@@ -99,7 +105,7 @@ def get_revisions(qid: str, since: datetime) -> list[dict[str, Any]]:
 
 def get_entity_data(qid: str, revid: int) -> dict[str, Any]:
     url = f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json?revision={revid}"
-    headers = {"User-Agent": "DailyLotusBot/0.1 (https://earthmetabolome.org/; contact@earthmetabolome.org)"}
+    headers = {"User-Agent": "DailyLotusBot/0.1 (https://www.earthmetabolome.org/; contact@earthmetabolome.org)"}
     r = requests.get(url, headers=headers, timeout=10)
     r.raise_for_status()
     return cast(dict[str, Any], r.json()["entities"][qid])
@@ -182,6 +188,9 @@ def get_reference_label_change_editor(qid: str, old_label: str, since: datetime)
 
 def occurrence_still_exists(compound_qid: str, taxon_qid: str) -> bool:
     sparql = SPARQLWrapper(WD_ENDPOINT)
+    sparql.addCustomHttpHeader(
+        "User-Agent", "DailyLotusBot/0.1 (https://www.earthmetabolome.org/; contact@earthmetabolome.org)"
+    )
     sparql.setQuery(f"ASK {{ wd:{compound_qid} wdt:P703 wd:{taxon_qid} . }}")
     sparql.setReturnFormat(JSON)
     result = cast(dict[str, Any], sparql.query().convert())
@@ -190,6 +199,9 @@ def occurrence_still_exists(compound_qid: str, taxon_qid: str) -> bool:
 
 def fetch_current_labels(compound_qid: str, taxon_qid: str, reference_qid: str) -> dict[str, str]:
     sparql = SPARQLWrapper(WD_ENDPOINT)
+    sparql.addCustomHttpHeader(
+        "User-Agent", "DailyLotusBot/0.1 (https://www.earthmetabolome.org/; contact@earthmetabolome.org)"
+    )
     sparql.setQuery(f"""
     SELECT ?compoundLabel ?taxonLabel ?referenceLabel WHERE {{
       OPTIONAL {{ wd:{compound_qid} rdfs:label ?compoundLabel . FILTER(LANG(?compoundLabel) = "en") }}

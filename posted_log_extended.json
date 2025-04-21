@@ -28,5 +28,35 @@
     "taxon_qid": "Q335130",
     "timestamp": "2025-04-19T06:50:05.508701",
     "toot_id": "114363295683187802"
+  },
+  {
+    "compound_label": "L-isoasparagine",
+    "compound_label_last_checked": "L-isoasparagine",
+    "compound_qid": "Q27109382",
+    "last_reply_timestamp": "2025-04-20T10:30:22.580901+00:00",
+    "p703_exists_last_checked": false,
+    "reference_label": "Studies on the constituents of the water extract of the root of mulberry tree (Morus bombycis Koidz).",
+    "reference_label_last_checked": "Studies on the constituents of the water extract of the root of mulberry tree (Morus bombycis Koidz).",
+    "reference_qid": "Q104945523",
+    "taxon_label": "Morus indica",
+    "taxon_label_last_checked": "Morus indica",
+    "taxon_qid": "Q21977492",
+    "timestamp": "2025-04-20T06:00:06.787895",
+    "toot_id": "114368761465789113"
+  },
+  {
+    "compound_label": "6alpha-Chloro-5beta-hydroxywithaferin A",
+    "compound_label_last_checked": "6alpha-Chloro-5beta-hydroxywithaferin A",
+    "compound_qid": "Q105346239",
+    "last_reply_timestamp": "2025-04-21T06:00:06.590274",
+    "p703_exists_last_checked": true,
+    "reference_label": "Withaferin A-related steroids from Withania aristata exhibit potent antiproliferative activity by inducing apoptosis in human tumor cells",
+    "reference_label_last_checked": "Withaferin A-related steroids from Withania aristata exhibit potent antiproliferative activity by inducing apoptosis in human tumor cells",
+    "reference_qid": "Q39330257",
+    "taxon_label": "Withania aristata",
+    "taxon_label_last_checked": "Withania aristata",
+    "taxon_qid": "Q17401058",
+    "timestamp": "2025-04-21T06:00:06.590268",
+    "toot_id": "114374423764403784"
   }
 ]
