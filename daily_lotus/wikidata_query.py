@@ -44,12 +44,14 @@ def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
       ?refnode pr:P248 ?reference .
       ?taxon wdt:P18 ?taxon_image .
       ?taxon wdt:P171* ?kingdom .
-      FILTER(?kingdom IN 
-              wd:Q729,   # Animalia
-              wd:Q756,   # Plantae
-              wd:Q764,   # Fungi
-	          wd:Q10876  # Bacteria (domain, not kingdom)
-           )
+      FILTER(
+        ?kingdom IN (
+          wd:Q729,   # Animalia
+          wd:Q756,   # Plantae
+          wd:Q764,   # Fungi
+          wd:Q10876  # Bacteria (domain, not kingdom)
+        )
+      )
       SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
     }}
     LIMIT 10
