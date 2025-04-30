@@ -35,7 +35,7 @@ def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
     SELECT ?compoundLabel ?compound ?taxon ?taxonLabel ?reference ?referenceLabel ?smiles ?taxon_image ?kingdom ?kingdomLabel WHERE {{
       BIND(wd:{qid} AS ?compound)
       ?compound wdt:P233 ?smiles_c .
-      OPTIONAL { ?compound wdt:P2017 ?smiles_i . }
+      OPTIONAL {{ ?compound wdt:P2017 ?smiles_i . }}
       BIND(COALESCE(?smiles_i, ?smiles_c) AS ?smiles)
       FILTER(BOUND(?smiles))
       ?compound p:P703 ?statement .
