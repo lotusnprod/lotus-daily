@@ -14,7 +14,7 @@ def get_candidate_qids() -> list[str]:
     query = """
     SELECT DISTINCT ?compound WHERE {
       ?compound wdt:P703 ?taxon ;
-                wdt:P2017 ?smiles .
+                wdt:P233 [] .
       ?taxon wdt:P18 ?image .
     }
     LIMIT 500000
@@ -34,14 +34,22 @@ def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
     query = f"""
     SELECT ?compoundLabel ?compound ?taxon ?taxonLabel ?reference ?referenceLabel ?smiles ?taxon_image ?kingdom ?kingdomLabel WHERE {{
       BIND(wd:{qid} AS ?compound)
-      ?compound wdt:P2017 ?smiles .
+      ?compound wdt:P233 ?smiles_c .
+      OPTIONAL { ?compound wdt:P2017 ?smiles_i . }
+      BIND(COALESCE(?smiles_i, ?smiles_c) AS ?smiles)
+      FILTER(BOUND(?smiles))
       ?compound p:P703 ?statement .
       ?statement ps:P703 ?taxon ;
                  prov:wasDerivedFrom ?refnode .
       ?refnode pr:P248 ?reference .
       ?taxon wdt:P18 ?taxon_image .
       ?taxon wdt:P171* ?kingdom .
-      FILTER(?kingdom IN (wd:Q756, wd:Q764, wd:Q729, wd:Q10876))
+      FILTER(?kingdom IN 
+              wd:Q729,   # Animalia
+              wd:Q756,   # Plantae
+              wd:Q764,   # Fungi
+	          wd:Q10876  # Bacteria (domain, not kingdom)
+           )
       SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
     }}
     LIMIT 10
