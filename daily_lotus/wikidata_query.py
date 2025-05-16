@@ -101,9 +101,7 @@ def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
         "smiles": smiles,
         "image_url": image_url,
         "taxon_image_url": extract_val("taxon_image"),
-        "taxon_emoji": {"Q756": "🌿", "Q764": "🍄", "Q729": "🐛", "Q10876": "🦠"}.get(
-            extract_qid("kingdom"), "🧬"
-        ),
+        "taxon_emoji": {"Q756": "🌿", "Q764": "🍄", "Q729": "🐛", "Q10876": "🦠"}.get(extract_qid("kingdom"), "🧬"),
         "kingdom_label": extract_val("kingdomLabel"),
     }
 
@@ -120,27 +118,17 @@ def get_revisions(qid: str, since: datetime) -> list[dict[str, Any]]:
         "formatversion": "2",
         "format": "json",
     }
-    headers = {
-        "User-Agent": "DailyLotusBot/0.1 (https://www.earthmetabolome.org/; contact@earthmetabolome.org)"
-    }
+    headers = {"User-Agent": "DailyLotusBot/0.1 (https://www.earthmetabolome.org/; contact@earthmetabolome.org)"}
     response = requests.get(url, params=params, headers=headers, timeout=10)
     response.raise_for_status()
     data = response.json()
     pages = data.get("query", {}).get("pages", [])
-    return (
-        cast(list[dict[str, Any]], pages[0]["revisions"])
-        if pages and "revisions" in pages[0]
-        else []
-    )
+    return cast(list[dict[str, Any]], pages[0]["revisions"]) if pages and "revisions" in pages[0] else []
 
 
 def get_entity_data(qid: str, revid: int) -> dict[str, Any]:
-    url = (
-        f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json?revision={revid}"
-    )
-    headers = {
-        "User-Agent": "DailyLotusBot/0.1 (https://www.earthmetabolome.org/; contact@earthmetabolome.org)"
-    }
+    url = f"https://www.wikidata.org/wiki/Special:EntityData/{qid}.json?revision={revid}"
+    headers = {"User-Agent": "DailyLotusBot/0.1 (https://www.earthmetabolome.org/; contact@earthmetabolome.org)"}
     r = requests.get(url, headers=headers, timeout=10)
     r.raise_for_status()
     return cast(dict[str, Any], r.json()["entities"][qid])
@@ -162,9 +150,7 @@ def get_claim_ids_from_revision(qid: str, revid: int, prop: str) -> set[str]:
     return ids
 
 
-def get_revision_pairs(
-    qid: str, since: datetime
-) -> list[tuple[dict[str, Any], dict[str, Any]]]:
+def get_revision_pairs(qid: str, since: datetime) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     revs = get_revisions(qid, since)
     return list(zip(revs[:-1], revs[1:]))
 
@@ -186,15 +172,11 @@ def compare_revisions_for_change(
     return None
 
 
-def find_p703_removal_editor(
-    qid: str, taxon_qid: str, since: datetime
-) -> Optional[str]:
+def find_p703_removal_editor(qid: str, taxon_qid: str, since: datetime) -> Optional[str]:
     for old_rev, new_rev in get_revision_pairs(qid, since):
         if taxon_qid in get_claim_ids_from_revision(
             qid, old_rev["revid"], "P703"
-        ) and taxon_qid not in get_claim_ids_from_revision(
-            qid, new_rev["revid"], "P703"
-        ):
+        ) and taxon_qid not in get_claim_ids_from_revision(qid, new_rev["revid"], "P703"):
             return str(new_rev["user"])
     return None
 
@@ -205,14 +187,10 @@ def extract_label(data: dict[str, Any]) -> Optional[str]:
 
 
 def get_label_change_editor(qid: str, old_label: str, since: datetime) -> Optional[str]:
-    return compare_revisions_for_change(
-        qid, get_revisions(qid, since), extract_label, old_label
-    )
+    return compare_revisions_for_change(qid, get_revisions(qid, since), extract_label, old_label)
 
 
-def get_smiles_change_editor(
-    qid: str, old_smiles: str, since: datetime
-) -> Optional[str]:
+def get_smiles_change_editor(qid: str, old_smiles: str, since: datetime) -> Optional[str]:
     def extractor(data: dict[str, Any]) -> Optional[str]:
         for claim in data.get("claims", {}).get("P2017", []):
             val = claim.get("mainsnak", {}).get("datavalue", {}).get("value")
@@ -220,14 +198,10 @@ def get_smiles_change_editor(
                 return val
         return None
 
-    return compare_revisions_for_change(
-        qid, get_revisions(qid, since), extractor, old_smiles
-    )
+    return compare_revisions_for_change(qid, get_revisions(qid, since), extractor, old_smiles)
 
 
-def get_reference_label_change_editor(
-    qid: str, old_label: str, since: datetime
-) -> Optional[str]:
+def get_reference_label_change_editor(qid: str, old_label: str, since: datetime) -> Optional[str]:
     for old_rev, new_rev in get_revision_pairs(qid, since):
         if (
             (old_val := get_label_from_revision(qid, old_rev["revid"])) == old_label
@@ -250,9 +224,7 @@ def occurrence_still_exists(compound_qid: str, taxon_qid: str) -> bool:
     return cast(bool, result.get("boolean", False))
 
 
-def fetch_current_labels(
-    compound_qid: str, taxon_qid: str, reference_qid: str
-) -> dict[str, str]:
+def fetch_current_labels(compound_qid: str, taxon_qid: str, reference_qid: str) -> dict[str, str]:
     sparql = SPARQLWrapper(WD_ENDPOINT)
     sparql.addCustomHttpHeader(
         "User-Agent",
