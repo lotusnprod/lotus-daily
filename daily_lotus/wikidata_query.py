@@ -75,11 +75,11 @@ def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
     row = secrets.choice(results)
 
 
-    def extract_val(f):
+    def extract_val(f: str) -> str:
         return str(row.get(f, {}).get("value", ""))
 
 
-    def extract_qid(f):
+    def extract_qid(f: str) -> str:
         if "value" in row.get(f, {}):
             return row[f]["value"].split("/")[-1]
         return "unknown"
