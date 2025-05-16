@@ -52,6 +52,7 @@ def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
           wd:Q10876  # Bacteria (domain, not kingdom)
         )
       )
+      ?kingdom rdfs:label ?kingdomLabel . FILTER (lang(?kingdomLabel) = "en")
       ?compound rdfs:label ?compoundLabel . FILTER (lang(?compoundLabel) = "en")
       ?taxon rdfs:label ?taxonLabel . FILTER (lang(?taxonLabel) = "en")
       SERVICE <https://query-scholarly.wikidata.org/sparql> {{
