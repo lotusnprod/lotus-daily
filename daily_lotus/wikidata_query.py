@@ -236,11 +236,11 @@ def fetch_current_labels(compound_qid: str, taxon_qid: str, reference_qid: str) 
       OPTIONAL {{ wd:{taxon_qid} rdfs:label ?taxonLabel . FILTER(LANG(?taxonLabel) = "en") }}
       OPTIONAL {{
         SERVICE <https://query-scholarly.wikidata.org/sparql> {{
-          wd:{reference_qid} rdfs:label ?referenceLabel . FILTER (lang(?referenceLabel) = "en")
-        }}
-          OPTIONAL {{  rdfs:label ?referenceLabel . FILTER(LANG(?referenceLabel) = "en") }}
-      }}
-    }}
+            wd:{reference_qid} rdfs:label ?referenceLabel . FILTER (lang(?referenceLabel) = "en")
+            }}
+            OPTIONAL {{  rdfs:label ?referenceLabel . FILTER(LANG(?referenceLabel) = "en") }}
+            }}
+            }}
     """)
     sparql.setReturnFormat(JSON)
     raw = cast(dict[str, Any], sparql.query().convert())
