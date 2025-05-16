@@ -73,8 +73,17 @@ def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
         return None
 
     row = secrets.choice(results)
-    extract_val = lambda f: str(row.get(f, {}).get("value", ""))
-    extract_qid = lambda f: row.get(f, {}).get("value", "").split("/")[-1] if "value" in row.get(f, {}) else "unknown"
+
+
+    def extract_val(f):
+        return str(row.get(f, {}).get("value", ""))
+
+
+    def extract_qid(f):
+        if "value" in row.get(f, {}):
+            return row[f]["value"].split("/")[-1]
+        return "unknown"
+
 
     smiles = extract_val("smiles")
     image_url = (
