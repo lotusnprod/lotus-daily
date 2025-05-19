@@ -1,15 +1,15 @@
-# daily-lotus
+# lotus-daily
 
-[![Release](https://img.shields.io/github/v/release/oolonek/daily-lotus)](https://img.shields.io/github/v/release/oolonek/daily-lotus)
-[![Build status](https://img.shields.io/github/actions/workflow/status/oolonek/daily-lotus/main.yml?branch=main)](https://github.com/oolonek/daily-lotus/actions/workflows/main.yml?query=branch%3Amain)
-[![codecov](https://codecov.io/gh/oolonek/daily-lotus/branch/main/graph/badge.svg)](https://codecov.io/gh/oolonek/daily-lotus)
-[![Commit activity](https://img.shields.io/github/commit-activity/m/oolonek/daily-lotus)](https://img.shields.io/github/commit-activity/m/oolonek/daily-lotus)
-[![License](https://img.shields.io/github/license/oolonek/daily-lotus)](https://img.shields.io/github/license/oolonek/daily-lotus)
+[![Release](https://img.shields.io/github/v/release/lotusnprod/lotus-daily)](https://img.shields.io/github/v/release/lotusnprod/lotus-daily)
+[![Build status](https://img.shields.io/github/actions/workflow/status/lotusnprod/lotus-daily/main.yml?branch=main)](https://github.com/lotusnprod/lotus-daily/actions/workflows/main.yml?query=branch%3Amain)
+[![codecov](https://codecov.io/gh/lotusnprod/lotus-daily/branch/main/graph/badge.svg)](https://codecov.io/gh/lotusnprod/lotus-daily)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/lotusnprod/lotus-daily)](https://img.shields.io/github/commit-activity/m/lotusnprod/lotus-daily)
+[![License](https://img.shields.io/github/license/lotusnprod/lotus-daily)](https://img.shields.io/github/license/lotusnprod/lotus-daily)
 
 This is a Python bot for daily_lotus account on Mastodon
 
-- **Github repository**: <https://github.com/oolonek/daily-lotus/>
-- **Documentation** <https://oolonek.github.io/daily-lotus/>
+- **Github repository**: <https://github.com/lotusnprod/lotus-daily/>
+- **Documentation** <https://lotusnprod.github.io/lotus-daily/>
 
 # 🤖 daily_lotus bot
 
