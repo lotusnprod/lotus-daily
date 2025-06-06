@@ -43,6 +43,8 @@ def format_unified_summary(
         lines.append(f"\n🧑‍🔧 Edited by: {mentions}")
 
     lines.append(f"\n✏️ [Improve it on Wikidata](https://www.wikidata.org/wiki/{compound_qid}#P703)")
+    # We add the #DailyNPedit hashtag to the end of the message
+    lines.append("\n#DailyNPedit")
     return "\n".join(lines)
 
 
