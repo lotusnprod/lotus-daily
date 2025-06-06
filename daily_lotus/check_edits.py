@@ -180,7 +180,11 @@ def process_entry(entry: PostRecord, dry_run: bool) -> bool:
     )
     print("📣 Replying with:\n", reply)
 
-    if not dry_run:
+    # We only post if editors are loged
+    if not editors:
+        print("⚠️ No editors found, not posting to Mastodon.")
+        return False
+    if not dry_run and editors:
         post_to_mastodon(reply, in_reply_to_id=entry["toot_id"])
         entry["last_reply_timestamp"] = datetime.now(tz=timezone.utc).isoformat()
     else:
