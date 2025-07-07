@@ -1,7 +1,7 @@
 import json
 import os
 from datetime import datetime
-from typing import Optional, TypedDict, cast
+from typing import TypedDict, cast
 
 LOG_FILE = "posted_log.json"
 EXTENDED_LOG_FILE = "posted_log_extended.json"
@@ -36,13 +36,13 @@ class PostRecord(TypedDict):
     compound_label: str
     taxon_label: str
     reference_label: str
-    toot_id: Optional[str]
+    toot_id: str | None
     timestamp: str
-    last_reply_timestamp: Optional[str]
-    compound_label_last_checked: Optional[str]
-    taxon_label_last_checked: Optional[str]
-    reference_label_last_checked: Optional[str]
-    p703_exists_last_checked: Optional[bool]
+    last_reply_timestamp: str | None
+    compound_label_last_checked: str | None
+    taxon_label_last_checked: str | None
+    reference_label_last_checked: str | None
+    p703_exists_last_checked: bool | None
 
 
 # class PostRecord(PostRecord, total=False):  # optional keys go here
@@ -67,7 +67,7 @@ def record_post_extended(
     compound_label: str,
     taxon_label: str,
     reference_label: str,
-    toot_id: Optional[str],
+    toot_id: str | None,
 ) -> None:
     log = load_extended_log()
     log.append({

@@ -2,7 +2,8 @@ import secrets
 import urllib.parse
 from collections.abc import Callable
 from datetime import datetime
-from typing import Any, Optional, cast
+from itertools import pairwise
+from typing import Any, cast
 
 import requests
 from SPARQLWrapper import JSON, SPARQLWrapper
@@ -31,7 +32,7 @@ def get_candidate_qids() -> list[str]:
     return [row["compound"]["value"].split("/")[-1] for row in results]
 
 
-def get_molecule_details(qid: str) -> Optional[dict[str, str]]:
+def get_molecule_details(qid: str) -> dict[str, str] | None:
     query = f"""
     SELECT ?compoundLabel ?compound ?taxon ?taxonLabel ?reference ?referenceLabel ?smiles ?taxon_image ?kingdom ?kingdomLabel WHERE {{
       BIND(wd:{qid} AS ?compound)
@@ -134,7 +135,7 @@ def get_entity_data(qid: str, revid: int) -> dict[str, Any]:
     return cast(dict[str, Any], r.json()["entities"][qid])
 
 
-def get_label_from_revision(qid: str, revid: int) -> Optional[str]:
+def get_label_from_revision(qid: str, revid: int) -> str | None:
     entity = get_entity_data(qid, revid)
     val = entity.get("labels", {}).get("en", {}).get("value")
     return val if isinstance(val, str) else None
@@ -152,15 +153,15 @@ def get_claim_ids_from_revision(qid: str, revid: int, prop: str) -> set[str]:
 
 def get_revision_pairs(qid: str, since: datetime) -> list[tuple[dict[str, Any], dict[str, Any]]]:
     revs = get_revisions(qid, since)
-    return list(zip(revs[:-1], revs[1:]))
+    return list(pairwise(revs))
 
 
 def compare_revisions_for_change(
     qid: str,
     revisions: list[dict[str, Any]],
-    extractor: Callable[[dict[str, Any]], Optional[str]],
+    extractor: Callable[[dict[str, Any]], str | None],
     old_val: str,
-) -> Optional[str]:
+) -> str | None:
     for i in range(1, len(revisions)):
         old_data: dict[str, Any] = get_entity_data(qid, revisions[i - 1]["revid"])
         new_data: dict[str, Any] = get_entity_data(qid, revisions[i]["revid"])
@@ -172,7 +173,7 @@ def compare_revisions_for_change(
     return None
 
 
-def find_p703_removal_editor(qid: str, taxon_qid: str, since: datetime) -> Optional[str]:
+def find_p703_removal_editor(qid: str, taxon_qid: str, since: datetime) -> str | None:
     for old_rev, new_rev in get_revision_pairs(qid, since):
         if taxon_qid in get_claim_ids_from_revision(
             qid, old_rev["revid"], "P703"
@@ -181,17 +182,17 @@ def find_p703_removal_editor(qid: str, taxon_qid: str, since: datetime) -> Optio
     return None
 
 
-def extract_label(data: dict[str, Any]) -> Optional[str]:
+def extract_label(data: dict[str, Any]) -> str | None:
     val = data.get("labels", {}).get("en", {}).get("value")
     return val if isinstance(val, str) else None
 
 
-def get_label_change_editor(qid: str, old_label: str, since: datetime) -> Optional[str]:
+def get_label_change_editor(qid: str, old_label: str, since: datetime) -> str | None:
     return compare_revisions_for_change(qid, get_revisions(qid, since), extract_label, old_label)
 
 
-def get_smiles_change_editor(qid: str, old_smiles: str, since: datetime) -> Optional[str]:
-    def extractor(data: dict[str, Any]) -> Optional[str]:
+def get_smiles_change_editor(qid: str, old_smiles: str, since: datetime) -> str | None:
+    def extractor(data: dict[str, Any]) -> str | None:
         for claim in data.get("claims", {}).get("P2017", []):
             val = claim.get("mainsnak", {}).get("datavalue", {}).get("value")
             if isinstance(val, str):
@@ -201,7 +202,7 @@ def get_smiles_change_editor(qid: str, old_smiles: str, since: datetime) -> Opti
     return compare_revisions_for_change(qid, get_revisions(qid, since), extractor, old_smiles)
 
 
-def get_reference_label_change_editor(qid: str, old_label: str, since: datetime) -> Optional[str]:
+def get_reference_label_change_editor(qid: str, old_label: str, since: datetime) -> str | None:
     for old_rev, new_rev in get_revision_pairs(qid, since):
         if (
             (old_val := get_label_from_revision(qid, old_rev["revid"])) == old_label

@@ -2,7 +2,7 @@ import argparse
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Optional, cast
+from typing import cast
 
 from daily_lotus.log import PostRecord, load_extended_log
 from daily_lotus.mastodon_client import post_to_mastodon
@@ -60,7 +60,7 @@ def initialize_last_checked_labels(entry: PostRecord) -> None:
         entry["p703_exists_last_checked"] = True
 
 
-def was_occurrence_deleted(entry: PostRecord, since: datetime) -> Optional[str]:
+def was_occurrence_deleted(entry: PostRecord, since: datetime) -> str | None:
     """Check if the P703 (found in taxon) statement is still present."""
     occurrence_exists = occurrence_still_exists(entry["compound_qid"], entry["taxon_qid"])
 
