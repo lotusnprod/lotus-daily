@@ -12,12 +12,12 @@ WD_ENDPOINT = "https://query.wikidata.org/sparql"
 
 
 def get_candidate_qids() -> list[str]:
-    query = """
-    SELECT DISTINCT ?compound WHERE {
+    query = f"""
+    SELECT DISTINCT ?compound WHERE {{
       ?compound wdt:P703 ?taxon ;
                 wdt:P233 [] .
       ?taxon wdt:P18 ?image .
-    }
+    }}
     LIMIT 500000
     """
     sparql = SPARQLWrapper(WD_ENDPOINT)
@@ -35,7 +35,7 @@ def get_candidate_qids() -> list[str]:
 def get_molecule_details(qid: str) -> dict[str, str] | None:
     query = f"""
     SELECT ?compoundLabel ?compound ?taxon ?taxonLabel ?reference ?referenceLabel ?smiles ?taxon_image ?kingdom ?kingdomLabel WHERE {{
-      BIND(wd:{qid} AS ?compound)
+      VALUES ?compound {{wd:{qid}}}
       ?compound wdt:P233 ?smiles_c .
       OPTIONAL {{ ?compound wdt:P2017 ?smiles_i . }}
       BIND(COALESCE(?smiles_i, ?smiles_c) AS ?smiles)
@@ -233,9 +233,14 @@ def fetch_current_labels(compound_qid: str, taxon_qid: str, reference_qid: str) 
     )
     sparql.setQuery(f"""
     SELECT ?compoundLabel ?taxonLabel ?referenceLabel WHERE {{
-      OPTIONAL {{ wd:{compound_qid} rdfs:label ?compoundLabel . FILTER(LANG(?compoundLabel) = "en") }}
-      OPTIONAL {{ wd:{taxon_qid} rdfs:label ?taxonLabel . FILTER(LANG(?taxonLabel) = "en") }}
-      OPTIONAL {{ wd:{reference_qid} rdfs:label ?referenceLabel . FILTER(LANG(?referenceLabel) = "en") }}
+      VALUES ?compound_qid {{wd:{compound_qid}}}
+      VALUES ?taxon_qid {{wd:{taxon_qid}}}
+      VALUES ?reference_qid {{wd:{reference_qid}}}
+      OPTIONAL {{ ?compound_qid rdfs:label ?compoundLabel . FILTER(LANG(?compoundLabel) = "en") }}
+      OPTIONAL {{ ?taxon_qid rdfs:label ?taxonLabel . FILTER(LANG(?taxonLabel) = "en") }}
+      SERVICE <https://query-scholarly.wikidata.org/sparql> {{
+        OPTIONAL {{ ?reference_qid rdfs:label ?referenceLabel . FILTER(LANG(?referenceLabel) = "en") }}
+        }}
     }}
     """)
     sparql.setReturnFormat(JSON)
