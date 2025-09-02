@@ -12,12 +12,12 @@ WD_ENDPOINT = "https://query.wikidata.org/sparql"
 
 
 def get_candidate_qids() -> list[str]:
-    query = f"""
-    SELECT DISTINCT ?compound WHERE {{
+    query = """
+    SELECT DISTINCT ?compound WHERE {
       ?compound wdt:P703 ?taxon ;
                 wdt:P233 [] .
       ?taxon wdt:P18 ?image .
-    }}
+    }
     LIMIT 500000
     """
     sparql = SPARQLWrapper(WD_ENDPOINT)
