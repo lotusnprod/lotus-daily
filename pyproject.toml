@@ -10,7 +10,6 @@ classifiers = [
   "Intended Audience :: Developers",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -19,9 +18,9 @@ classifiers = [
 ]
 dependencies = [
   "cairosvg>=2.8.2",
-  "mastodon-py>=2.0.1",
-  "python-dotenv>=1.1.0",
-  "requests>=2.32.3",
+  "mastodon-py>=2.1.4",
+  "python-dotenv>=1.2.1",
+  "requests>=2.32.5",
   "sparqlwrapper>=2.0.0",
 ]
 
@@ -32,17 +31,17 @@ Repository = "https://github.com/oolonek/daily-lotus"
 
 [dependency-groups]
 dev = [
-  "deptry>=0.23.0",
-  "mkdocs>=1.4.2",
-  "mkdocs-material>=9.6.15",
-  "mkdocstrings[python]>=0.26.1",
-  "mypy>=1.16.1",
-  "pre-commit>=2.20.0",
-  "pytest>=9.0.1",
+  "deptry>=0.24.0",
+  "mkdocs>=1.6.1",
+  "mkdocs-material>=9.7.1",
+  "mkdocstrings[python]>=1.0.0",
+  "mypy>=1.19.1",
+  "pre-commit>=4.5.1",
+  "pytest>=9.0.2",
   "pytest-cov>=7.0.0",
-  "ruff>=0.12.2",
-  "tox-uv>=1.26.1",
-  "types-requests>=2.32.4.20250611",
+  "ruff>=0.14.11",
+  "tox-uv>=1.29.0",
+  "types-requests>=2.32.4.20260107",
 ]
 
 [build-system]
