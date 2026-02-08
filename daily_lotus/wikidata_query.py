@@ -233,14 +233,11 @@ def fetch_current_labels(compound_qid: str, taxon_qid: str, reference_qid: str) 
     )
     sparql.setQuery(f"""
     SELECT ?compoundLabel ?taxonLabel ?referenceLabel WHERE {{
-      VALUES ?compound_qid {{wd:{compound_qid}}}
-      VALUES ?taxon_qid {{wd:{taxon_qid}}}
-      VALUES ?reference_qid {{wd:{reference_qid}}}
-      OPTIONAL {{ ?compound_qid rdfs:label ?compoundLabel . FILTER(LANG(?compoundLabel) = "en") }}
-      OPTIONAL {{ ?taxon_qid rdfs:label ?taxonLabel . FILTER(LANG(?taxonLabel) = "en") }}
+      OPTIONAL {{ wd:{compound_qid} rdfs:label ?compoundLabel . FILTER(LANG(?compoundLabel) = "en") }}
+      OPTIONAL {{ wd:{taxon_qid} rdfs:label ?taxonLabel . FILTER(LANG(?taxonLabel) = "en") }}
       SERVICE <https://query-scholarly.wikidata.org/sparql> {{
-        OPTIONAL {{ ?reference_qid rdfs:label ?referenceLabel . FILTER(LANG(?referenceLabel) = "en") }}
-        }}
+        OPTIONAL {{ wd:{reference_qid} rdfs:label ?referenceLabel . FILTER(LANG(?referenceLabel) = "en") }}
+      }}
     }}
     """)
     sparql.setReturnFormat(JSON)
