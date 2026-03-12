@@ -33,14 +33,14 @@ Repository = "https://github.com/oolonek/daily-lotus"
 dev = [
   "deptry>=0.24.0",
   "mkdocs>=1.6.1",
-  "mkdocs-material>=9.7.4",
+  "mkdocs-material>=9.7.5",
   "mkdocstrings[python]>=1.0.3",
   "mypy>=1.19.1",
-  "prek>=0.3.4",
+  "prek>=0.3.5",
   "pytest>=9.0.2",
   "pytest-cov>=7.0.0",
   "ruff>=0.15.5",
-  "tox-uv>=1.33.1",
+  "tox-uv>=1.33.2",
   "types-requests>=2.32.4.20260107",
 ]
 
