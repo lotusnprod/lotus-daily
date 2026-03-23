@@ -17,7 +17,7 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-  "cairosvg>=2.8.2",
+  "cairosvg>=2.9.0",
   "mastodon-py>=2.1.4",
   "python-dotenv>=1.2.2",
   "requests>=2.32.5",
@@ -31,16 +31,16 @@ Repository = "https://github.com/oolonek/daily-lotus"
 
 [dependency-groups]
 dev = [
-  "deptry>=0.24.0",
+  "deptry>=0.25.1",
   "mkdocs>=1.6.1",
-  "mkdocs-material>=9.7.5",
+  "mkdocs-material>=9.7.6",
   "mkdocstrings[python]>=1.0.3",
   "mypy>=1.19.1",
-  "prek>=0.3.5",
+  "prek>=0.3.8",
   "pytest>=9.0.2",
-  "pytest-cov>=7.0.0",
-  "ruff>=0.15.5",
-  "tox-uv>=1.33.2",
+  "pytest-cov>=7.1.0",
+  "ruff>=0.15.7",
+  "tox-uv>=1.33.4",
   "types-requests>=2.32.4.20260107",
 ]
 
