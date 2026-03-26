@@ -20,7 +20,7 @@ dependencies = [
   "cairosvg>=2.9.0",
   "mastodon-py>=2.1.4",
   "python-dotenv>=1.2.2",
-  "requests>=2.32.5",
+  "requests>=2.33.0",
   "sparqlwrapper>=2.0.0",
 ]
 
@@ -39,9 +39,9 @@ dev = [
   "prek>=0.3.8",
   "pytest>=9.0.2",
   "pytest-cov>=7.1.0",
-  "ruff>=0.15.7",
+  "ruff>=0.15.8",
   "tox-uv>=1.33.4",
-  "types-requests>=2.32.4.20260107",
+  "types-requests>=2.32.4.20260324",
 ]
 
 [build-system]
