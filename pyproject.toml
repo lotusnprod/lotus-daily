@@ -20,7 +20,7 @@ dependencies = [
   "cairosvg>=2.9.0",
   "mastodon-py>=2.1.4",
   "python-dotenv>=1.2.2",
-  "requests>=2.33.0",
+  "requests>=2.33.1",
   "sparqlwrapper>=2.0.0",
 ]
 
@@ -35,13 +35,13 @@ dev = [
   "mkdocs>=1.6.1",
   "mkdocs-material>=9.7.6",
   "mkdocstrings[python]>=1.0.3",
-  "mypy>=1.19.1",
+  "mypy>=1.20.0",
   "prek>=0.3.8",
-  "pytest>=9.0.2",
+  "pytest>=9.0.3",
   "pytest-cov>=7.1.0",
-  "ruff>=0.15.8",
-  "tox-uv>=1.33.4",
-  "types-requests>=2.33.0.20260327",
+  "ruff>=0.15.9",
+  "tox-uv>=1.34.0",
+  "types-requests>=2.33.0.20260408",
 ]
 
 [build-system]
