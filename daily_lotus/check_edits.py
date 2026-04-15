@@ -49,7 +49,13 @@ def format_unified_summary(
 
 
 def initialize_last_checked_labels(entry: PostRecord) -> None:
-    """Ensure the entry has the *_label_last_checked fields initialized."""
+    """Ensure the entry has the *_label_last_checked fields initialized.
+
+    Parameters
+    ----------
+    entry : PostRecord
+        Entry.
+    """
     if "compound_label_last_checked" not in entry:
         entry["compound_label_last_checked"] = entry.get("compound_label", "")
     if "taxon_label_last_checked" not in entry:
@@ -61,7 +67,21 @@ def initialize_last_checked_labels(entry: PostRecord) -> None:
 
 
 def was_occurrence_deleted(entry: PostRecord, since: datetime) -> str | None:
-    """Check if the P703 (found in taxon) statement is still present."""
+    """Check if the P703 (found in taxon) statement is still present.
+
+    Parameters
+    ----------
+    entry : PostRecord
+        Entry.
+    since : datetime
+        Since.
+
+    Returns
+    -------
+    str | None
+            Username of the editor who removed the P703 claim, or ``None`` if
+            no deletion event is detected.
+    """
     occurrence_exists = occurrence_still_exists(entry["compound_qid"], entry["taxon_qid"])
 
     # Check for P703 relationship removal

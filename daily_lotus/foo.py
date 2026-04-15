@@ -1,13 +1,17 @@
 def foo(bar: str) -> str:
     """Summary line.
 
-    Extended description of function.
+        Extended description of function.
 
-    Args:
-        bar: Description of input argument.
+    Parameters
+    ----------
+    bar : str
+        Bar.
 
-    Returns:
-        Description of return value
+    Returns
+    -------
+    str
+            The input string ``bar``, returned unchanged.
     """
 
     return bar
