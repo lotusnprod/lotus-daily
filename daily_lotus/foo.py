@@ -11,7 +11,7 @@ def foo(bar: str) -> str:
     Returns
     -------
     str
-            The input string ``bar``, returned unchanged.
+        The input string ``bar``, returned unchanged.
     """
 
     return bar

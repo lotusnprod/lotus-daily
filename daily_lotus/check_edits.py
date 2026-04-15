@@ -79,8 +79,7 @@ def was_occurrence_deleted(entry: PostRecord, since: datetime) -> str | None:
     Returns
     -------
     str | None
-            Username of the editor who removed the P703 claim, or ``None`` if
-            no deletion event is detected.
+        P703 claim, or ``None`` if no deletion event is detected.
     """
     occurrence_exists = occurrence_still_exists(entry["compound_qid"], entry["taxon_qid"])
 
