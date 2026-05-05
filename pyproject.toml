@@ -36,12 +36,12 @@ dev = [
   "mkdocs-material>=9.7.6",
   "mkdocstrings[python]>=1.0.4",
   "mypy>=1.20.2",
-  "prek>=0.3.10",
+  "prek>=0.3.13",
   "pytest>=9.0.3",
   "pytest-cov>=7.1.0",
   "ruff>=0.15.12",
-  "tox-uv>=1.35.1",
-  "types-requests>=2.33.0.20260408",
+  "tox-uv>=1.35.2",
+  "types-requests>=2.33.0.20260503",
 ]
 
 [build-system]
