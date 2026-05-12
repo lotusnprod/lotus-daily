@@ -20,7 +20,7 @@ dependencies = [
   "cairosvg>=2.9.0",
   "mastodon-py>=2.2.1",
   "python-dotenv>=1.2.2",
-  "requests>=2.33.1",
+  "requests>=2.34.0",
   "sparqlwrapper>=2.0.0",
 ]
 
@@ -35,7 +35,7 @@ dev = [
   "mkdocs>=1.6.1",
   "mkdocs-material>=9.7.6",
   "mkdocstrings[python]>=1.0.4",
-  "mypy>=2.0.0",
+  "mypy>=2.1.0",
   "prek>=0.3.13",
   "pytest>=9.0.3",
   "pytest-cov>=7.1.0",
