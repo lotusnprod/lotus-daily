@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Export tag
         id: vars
@@ -35,6 +37,8 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up the environment
         uses: ./.github/actions/setup-python-env
@@ -58,6 +62,8 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Set up the environment
         uses: ./.github/actions/setup-python-env
