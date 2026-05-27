@@ -36,10 +36,10 @@ dev = [
   "mkdocs-material>=9.7.6",
   "mkdocstrings[python]>=1.0.4",
   "mypy>=2.1.0",
-  "prek>=0.4.1",
+  "prek>=0.4.3",
   "pytest>=9.0.3",
   "pytest-cov>=7.1.0",
-  "ruff>=0.15.13",
+  "ruff>=0.15.14",
   "tox-uv>=1.35.2",
   "types-requests>=2.33.0.20260518",
 ]
