@@ -176,7 +176,9 @@ def compare_revisions_for_change(
 def find_p703_removal_editor(qid: str, taxon_qid: str, since: datetime) -> str | None:
     for old_rev, new_rev in get_revision_pairs(qid, since):
         if taxon_qid in get_claim_ids_from_revision(
-            qid, old_rev["revid"], "P703"
+            qid,
+            old_rev["revid"],
+            "P703",
         ) and taxon_qid not in get_claim_ids_from_revision(qid, new_rev["revid"], "P703"):
             return str(new_rev["user"])
     return None

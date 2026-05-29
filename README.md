@@ -18,7 +18,7 @@ It highlights natural compounds found in plants, fungi, bacteria or animals — 
 
 The aim is to raise awareness on the hidden chemical diversity of life on Earth and the importance of open data in bio and chemodiversity research.
 
-We also expect that by putting side by side the structure of the molecule, a picture of the taxon and the references backing up the occurence this can serve as an entry point for researchers willing to contribute to the LOTUS Initiative and edit Wikidata.
+We also expect that by putting side by side the structure of the molecule, a picture of the taxon and the references backing up the occurrence this can serve as an entry point for researchers willing to contribute to the LOTUS Initiative and edit Wikidata.
 
 The bot is part of the [LOTUS Initiative](https://lotus.nprod.net/) and is powered by [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page) and the [Cheminformatics Microservice](https://docs.api.naturalproducts.net/).
 The bot is designed to be run daily, but you can also run it manually or in a dry-run mode to preview the output without posting.
@@ -31,7 +31,7 @@ Every day at 8:00 AM, the bot:
 
 1. Selects a random molecule from [Wikidata](https://www.wikidata.org/wiki/) that:
    - Has a known SMILES structure (so we can draw it)
-   - Is associated with a specific taxon trhough the find in taxon property ([P703](https://www.wikidata.org/wiki/Property:P703))
+   - Is associated with a specific taxon through the find in taxon property ([P703](https://www.wikidata.org/wiki/Property:P703))
    - Has a valid reference documenting this occurrence
 
 2. Fetches:
