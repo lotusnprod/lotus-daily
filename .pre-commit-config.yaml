@@ -67,3 +67,8 @@ repos:
     hooks:
       - id: zizmor
         entry: zizmor --fix=all .
+  - repo: https://github.com/jolars/panache-pre-commit
+    rev: v2.43.1 # Use the latest version
+    hooks:
+      - id: panache-format # Format files
+      - id: panache-lint # Lint and auto-fix issues
