@@ -132,16 +132,16 @@ as well.
 ## Roadmap
 
 - [ ] Add a command line interface (CLI) to to run the bot with different
-      parameters (e.g., focussed taxonomic groups, etc.)
+  parameters (e.g., focussed taxonomic groups, etc.)
 
 - [ ] Display 3D structures
 
 - [x] Check randomization of the input molecule selection. Simply dropped the
-      initial LIMIT, the query is anyway runned once a day, we can wait for a
-      pair of seconds and fetch the full LOTUS
+  initial LIMIT, the query is anyway runned once a day, we can wait for a
+  pair of seconds and fetch the full LOTUS
 
 - [x] Add a direct link to the found in taxon property and ref of the molecule
-      page on Wikidata (for curation purposes)
+  page on Wikidata (for curation purposes)
 
 Used the #P703 (e.g. https://www.wikidata.org/wiki/Q27290462#P703) anchor tag.
 Not sure if we can directly redirect to the taxon though ...
@@ -149,8 +149,8 @@ Not sure if we can directly redirect to the taxon though ...
 - [x] Add relevant #
 
 - [ ] Prepare a Streamlit app to display the same information (structures, taxon
-      image and references) but without waiting for the daily run. This could be
-      a first iteration for a curation interface for LOTUS data
+  image and references) but without waiting for the daily run. This could be
+  a first iteration for a curation interface for LOTUS data
 
 ## 🧬 Credits & contribution
 
