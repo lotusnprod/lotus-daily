@@ -1,6 +1,6 @@
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import TypedDict, cast
 
 LOG_FILE = "posted_log.json"
@@ -81,8 +81,8 @@ def record_post_extended(
         "reference_label": reference_label,
         "reference_label_last_checked": reference_label,
         "toot_id": toot_id,
-        "timestamp": datetime.utcnow().isoformat(),
-        "last_reply_timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "last_reply_timestamp": datetime.now(timezone.utc).isoformat(),
         "p703_exists_last_checked": True,
     })
     with open(EXTENDED_LOG_FILE, "w") as f:

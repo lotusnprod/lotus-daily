@@ -55,6 +55,10 @@ skip_empty = true
 branch = true
 source = ["daily_lotus"]
 
+[tool.deptry.package_module_name_map]
+"mastodon-py" = ["mastodon"]
+"cairosvg" = ["cairosvg"]
+
 [tool.mypy]
 files = ["daily_lotus"]
 disallow_untyped_defs = true

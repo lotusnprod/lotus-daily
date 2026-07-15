@@ -27,7 +27,14 @@ hooks = [
   {
     id = "deptry",
     language = "python",
-    additional_dependencies = ["deptry"],
+    additional_dependencies = [
+      "deptry",
+      "cairosvg>=2.9.0",
+      "mastodon-py>=2.2.1",
+      "python-dotenv>=1.2.2",
+      "requests>=2.34.2",
+      "sparqlwrapper>=2.0.0"
+    ],
     exclude = '^(?!.*\.py$).*$'
   }
 ]
@@ -71,7 +78,14 @@ hooks = [
     language = "python",
     entry = "ty check",
     exclude = '^(?!.*\.py$).*$',
-    additional_dependencies = ["ty"]
+    additional_dependencies = [
+      "ty",
+      "cairosvg>=2.9.0",
+      "mastodon-py>=2.2.1",
+      "python-dotenv>=1.2.2",
+      "requests>=2.34.2",
+      "sparqlwrapper>=2.0.0"
+    ]
   }
 ]
 

@@ -9,6 +9,8 @@ on:
 
 jobs:
   quality:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Check out
@@ -28,6 +30,8 @@ jobs:
         run: make check
 
   tests-and-type-check:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -59,6 +63,8 @@ jobs:
         if: ${{ matrix.python-version == '3.11' }}
 
   check-docs:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Check out

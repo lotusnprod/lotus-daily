@@ -220,8 +220,7 @@ def check_edits(dry_run: bool = False) -> None:
     changed = False
 
     for raw_entry in log:
-        entry = cast(PostRecord, raw_entry)
-        if process_entry(entry, dry_run=dry_run):
+        if process_entry(raw_entry, dry_run=dry_run):
             changed = True
 
     if changed:
