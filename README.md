@@ -16,9 +16,10 @@ This is a Python bot for daily_lotus account on Mastodon
 # 🤖 daily_lotus bot
 
 **daily_lotus** is a Python bot that toots daily natural products occurrences on
-Mastodon, via the account [@daily_lotus](https://mastodon.social/@daily_lotus).
-It highlights natural compounds found in plants, fungi, bacteria or animals ---
-and includes Wikidata references and visual structure depictions.
+Mastodon, via the account
+[`@daily_lotus`](https://mastodon.social/@daily_lotus). It highlights natural
+compounds found in plants, fungi, bacteria or animals --- and includes Wikidata
+references and visual structure depictions.
 
 The aim is to raise awareness on the hidden chemical diversity of life on Earth
 and the importance of open data in bio and chemodiversity research.
