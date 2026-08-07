@@ -39,7 +39,7 @@ dev = [
   "prek>=0.4.12",
   "pytest>=9.1.1",
   "pytest-cov>=7.1.0",
-  "ruff>=0.16.1",
+  "ruff>=0.16.2",
   "tox-uv>=1.36.0",
   "types-requests>=2.33.0.20260712",
 ]
