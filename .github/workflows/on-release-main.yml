@@ -46,7 +46,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up the environment
-        uses: ./.github/actions/setup-python-env
+        uses: $/.github/actions/setup-python-env
 
       - name: Download updated pyproject.toml
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
@@ -71,7 +71,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up the environment
-        uses: ./.github/actions/setup-python-env
+        uses: $/.github/actions/setup-python-env
 
       - name: Deploy documentation
         run: uv run mkdocs gh-deploy --force
