@@ -59,7 +59,7 @@ jobs:
 
 
       - name: Upload coverage reports to Codecov with GitHub Action on Python 3.11
-        uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5
         if: ${{ matrix.python-version == '3.11' }}
 
   check-docs:
